@@ -82,7 +82,11 @@ export const updateCompany = async(req, res) => {
 
             const file = req.file;
             const fileUri = getDataUri(file);
-            const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+            const uploadOptions = {
+                resource_type: "auto",
+                folder: "techjobhub/company-logos"
+            };
+            const cloudResponse = await cloudinary.uploader.upload(fileUri.content, uploadOptions);
             const logo = cloudResponse.secure_url;
 
             updateData.logo = logo;

@@ -22,9 +22,28 @@ export const register = async(req, res) => {
         let profilePhotoUrl = null;
         const file = req.file;
         if (file) {
-            const fileUri = getDataUri(file);
-            const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-            profilePhotoUrl = cloudResponse.secure_url;
+            try {
+                // Check if Cloudinary is properly configured
+                const isCloudinaryConfigured = 
+                    process.env.CLOUD_NAME && 
+                    process.env.API_KEY && 
+                    process.env.API_SECRET && 
+                    process.env.CLOUD_NAME !== 'dummy_cloud_name' &&
+                    process.env.API_KEY !== 'dummy_api_key' &&
+                    process.env.API_SECRET !== 'dummy_api_secret';
+                
+                if (!isCloudinaryConfigured) {
+                    console.warn('Cloudinary not properly configured. Skipping file upload.');
+                    profilePhotoUrl = null; // Skip file upload if Cloudinary not configured
+                } else {
+                    const fileUri = getDataUri(file);
+                    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+                    profilePhotoUrl = cloudResponse.secure_url;
+                }
+            } catch (error) {
+                console.error('File upload error:', error);
+                profilePhotoUrl = null; // Continue without profile photo if upload fails
+            }
         }
 
         const existingUser = await User.findOne({ email });
@@ -123,9 +142,9 @@ export const login = async(req, res) => {
             .status(200)
             .cookie("token", token, {
                 maxAge: 24 * 60 * 60 * 1000,
-                // httpOnly: true,
-                sameSite: 'none',
-                secure: true,
+                httpOnly: false, // Allow JavaScript access for development
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                secure: process.env.NODE_ENV === 'production', // Only secure in production
             })
             .json({
                 message: `Welcome back ${user.fullname}`,

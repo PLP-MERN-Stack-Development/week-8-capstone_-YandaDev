@@ -35,7 +35,7 @@ const HeroSection = () => {
                 transition={ { duration: 0.7 } }
                 viewport={ { once: true } }
             >
-                Find Your Dream Job With HireHub
+                Find Your Dream Job With TechJobHub
                 {/* <span className="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text user-select">
 
                 </span> */}

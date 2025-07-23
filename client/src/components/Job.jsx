@@ -74,7 +74,7 @@ const Job = ({ job }) => {
                         <Badge variant="secondary" className="mr-2">{ job?.position } Positions</Badge>
                         <span className="text-sm">{ job?.location }</span>
                     </div>
-                    <p className="text-gray-300 font-medium"> ₹ { job?.salary } LPA</p>
+                    <p className="text-gray-300 font-medium">R { job?.salary }</p>
 
                     <div className="mt-4 flex items-center justify-between">
                         {

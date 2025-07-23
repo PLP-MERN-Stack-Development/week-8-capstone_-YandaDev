@@ -8,7 +8,7 @@ import Navbar from './shared/Navbar';
 import Footer from './shared/Footer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, Building, Clock, IndianRupeeIcon } from 'lucide-react';
+import { MapPin, Building, Clock } from 'lucide-react';
 import { USER_API_END_POINT, JOB_API_END_POINT, APPLICATION_API_END_POINT } from '@/utils/constant';
 import { setsavedJobs } from '@/redux/authSlice';
 
@@ -123,10 +123,10 @@ const JobDescription = () => {
                                 { singleJob?.createdAt?.split('T')[0] || 'Not specified' }
                             </div>
                             <div className="flex items-center text-xs sm:text-base text-gray-300">
-                                <IndianRupeeIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                                <span className="text-sm sm:text-base mr-2 font-medium">R</span>
                                 { singleJob?.salary?.length === 0
                                     ? 'Not Disclosed'
-                                    : `${singleJob?.salary} LPA` }
+                                    : `${singleJob?.salary}` }
                             </div>
                         </div>
 

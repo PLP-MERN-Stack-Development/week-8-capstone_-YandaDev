@@ -1,19 +1,19 @@
-# Hire Hub
+# Tech Job Hub
 
 A comprehensive job seeking and posting platform that connects job seekers with recruiters.
 
 🔗 **Live URLs:**
-- Frontend: [https://hire-hub-chandan.vercel.app](https://hire-hub-chandan.vercel.app)
-- Backend: [https://hire-hub-psi.vercel.app](https://hire-hub-psi.vercel.app)
+- Frontend: [https://tech-job-hub.netlifly.app](https://tech-job-hub.netlifly.app)
+- Backend: [https://tech-job-hub.netlifly.app](https://tech-job-hub.netlifly.app)
 
 > **Important Note:** We're using free-tier servers which may need a warm-up:
 > 1. First open the backend URL and wait for it to load
 > 2. Then access the frontend URL for the best experience
 > 3. If experiencing delays, please refresh both URLs
 
-## ✨ Features
+## Features
 
-### 👤 For Job Seekers
+### For Job Seekers
 - Account creation and management
 - Job search with advanced filtering
 - Save interesting job postings
@@ -21,13 +21,13 @@ A comprehensive job seeking and posting platform that connects job seekers with 
 - Profile customization
 - Resume upload and management
 
-### 💼 For Recruiters
+### For Recruiters
 - Company registration and profile management
 - Job posting creation and management
 - Access to applicant details (name, phone, resume)
 - Applicant tracking and management
 
-## 📸 Application Screenshots
+## Application Screenshots
 
 ### 1. Job Description Page
 ![Landing Page](./images/1.png)
@@ -44,7 +44,7 @@ A comprehensive job seeking and posting platform that connects job seekers with 
 ### 5. Landing Page
 ![Job Posting Form](./images/5.png)
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - Frontend: React.js
 - Backend: Node.js
@@ -52,86 +52,102 @@ A comprehensive job seeking and posting platform that connects job seekers with 
 - Cloud Storage: Cloudinary
 - AI Integration: Google Gemini
 
-## ⚙️ Environment Variables
+## Environment Variables
 
-Create a `.env` file in the root directory:
-
+### Development Setup (.env.development)
 ```env
+NODE_ENV=development
 PORT=8000
-MONGO_URI=mongodb+srv://your_username:your_password@cluster0.example.mongodb.net/
+MONGO_URI=mongodb://localhost:27017/techjobhub_dev
 SECRET_KEY=your_secret_key
-API_KEY=your_cloudinary_api_key
-API_SECRET=your_cloudinary_api_secret
-CLOUD_NAME=your_cloudinary_cloud_name
-GIMINIAI_API=your_gemini_api_key
-FRONTEND_URL=https://hire-hub-chandan.vercel.app
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+GEMINI_API_KEY=your_gemini_api_key
+FRONTEND_URL=http://localhost:5173
 ```
+
+### Production Setup (.env.production)
+```env
+NODE_ENV=production
+PORT=8000
+MONGO_URI=mongodb+srv://your_username:your_password@cluster0.example.mongodb.net/techjobhub_prod
+SECRET_KEY=your_very_strong_jwt_secret
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+GEMINI_API_KEY=your_gemini_api_key
+FRONTEND_URL=https://tech-job-hub.netlifly.app
+```
+
+> **📋 Database Strategy:**
+> - **Development**: Use local MongoDB (faster, offline-capable)
+> - **Production**: Use MongoDB Atlas (managed, scalable)
+> - See [DATABASE_SETUP.md](./DATABASE_SETUP.md) for detailed setup instructions
 
 ## 🔧 Frontend Configuration
 
 Update the backend URL in `client/src/utils/constant.js`:
 
 ```javascript
-const BASE_URL = "https://hire-hub-psi.vercel.app/api/v1";
+const BASE_URL = "http://localhost:8000/api/v1";
 ```
 
-## 🐳 Docker Deployment
+##  Local Development
 
 ### Prerequisites
-- Docker installed on your system
-- Docker Compose (recommended)
+- Node.js (v18+ recommended)
+- pnpm (recommended package manager)
 
-### Available Docker Images
+Install pnpm if you haven't already:
 ```bash
-chandankumar55/hire_hub:frontend-v1
-chandankumar55/hire_hub:backend-v1
-chandankumar55/hire_hub:mongo-v1
+npm install -g pnpm
 ```
 
-### Running Containers
-
-1. Pull the images:
-```bash
-docker pull chandankumar55/hire_hub:frontend-v1
-docker pull chandankumar55/hire_hub:backend-v1
-docker pull chandankumar55/hire_hub:mongo-v1
-```
-
-2. Start MongoDB:
-```bash
-docker run -d --name mongodb -p 27017:27017 chandankumar55/hire_hub:mongo-v1
-```
-
-3. Start Backend:
-```bash
-docker run -d --name backend -p 8000:8000 --network=bridge chandankumar55/hire_hub:backend-v1
-```
-
-4. Start Frontend:
-```bash
-docker run -d --name frontend -p 5173:5173 --network=bridge chandankumar55/hire_hub:frontend-v1
-```
-
-## 💻 Local Development
+### Setup Instructions
 
 1. Clone the repository
-2. Install dependencies:
-```bash
-# Backend
-cd backend
-npm install
+2. **Setup Database** (see [DATABASE_SETUP.md](./DATABASE_SETUP.md)):
+   - **Development**: Install local MongoDB (recommended)
+   - **Production**: Setup MongoDB Atlas account
+3. **Configure Environment Variables**:
+   - Copy `.env.development` template and update with your values
+   - For production, use `.env.production` template
+4. Install dependencies:
 
-# Frontend
-cd client
-npm install
+**Option 1: Using pnpm workspace (Recommended)**
+```bash
+# Install all dependencies for both frontend and backend
+pnpm install
+
+# Start development servers with local MongoDB
+pnpm --filter server run dev &
+pnpm --filter client run dev
 ```
 
-3. Start the development servers:
+**Option 2: Individual setup**
 ```bash
 # Backend
+cd server
+pnpm install
+pnpm run dev
+
+# Frontend (in a new terminal)
+cd client
+pnpm install
+pnpm run dev
+```
+
+**Option 3: Using npm (alternative)**
+```bash
+# Backend
+cd server
+npm install
 npm run dev
 
 # Frontend
+cd client  
+npm install
 npm run dev
 ```
 

@@ -4,7 +4,7 @@ let conversationHistory = [
     { role: "system", content: "You are STRICTLY a career and job assistance chatbot. You must REFUSE to answer ANY technical questions, programming questions, math problems, general knowledge questions, or any topic that is not directly about job searching, career advice, workplace guidance, or employment help. Even if someone asks about programming in the context of careers, do NOT write code or solve technical problems. Instead, redirect them by saying: 'I can only help with job and career-related questions like resume writing, interview tips, salary negotiation, and career guidance. I cannot help with technical problems or programming code.'" }
 ];
 
-export const chatboat = async(req, res) => {
+export const chatbot = async(req, res) => {
     const userMessage = req.body.message;
 
     conversationHistory.push({ role: "user", content: userMessage });

@@ -44,7 +44,7 @@ const Navbar = () => {
                         className="text-2xl font-bold text-white cursor-pointer flex items-center"
                         onClick={ () => navigate('/') }
                     >
-                        Hire <span className="text-blue-400">Hub</span>
+                        Tech<span className="text-blue-400">JobHub</span>
                     </div>
 
                     {/* Mobile Menu Toggle */ }
@@ -108,7 +108,7 @@ const Navbar = () => {
                                             </div>
                                         </div>
                                         <div className="mt-4 flex justify-between items-center gap-2">
-                                            { user && user.role === 'student' && (
+                                            { user && user.role === 'jobseeker' && (
                                                 <Link to="/profile">
                                                     <Button variant="ghost" size="sm" className="flex items-center gap-1 text-blue-400">
                                                         <User2 className="w-4 h-4" />

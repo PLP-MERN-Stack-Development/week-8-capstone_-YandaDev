@@ -60,7 +60,7 @@ export const getAllJobs = async(req, res) => {
             console.log(error);
         }
     }
-    // student
+    // jobseeker
 export const getJobById = async(req, res) => {
         try {
             const jobId = req.params.id;

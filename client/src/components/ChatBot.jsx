@@ -10,7 +10,7 @@ import './ChatBot.css';
 
 // Mistral AI API integration
 const API_URL = "https://api.mistral.ai/v1/chat/completions";
-const HIRE_HUB_SYSTEM_PROMPT = `You are Hire Hub AI, created by Hire Hub Technologies in India. 
+const TECH_JOB_HUB_SYSTEM_PROMPT = `You are TechJobHub AI, created by TechJobHub Technologies in South Africa. 
 You help job seekers and recruiters connect. IMPORTANT: Keep all responses extremely brief (1-2 short sentences max).
 Never use bullet points or lists. Never write more than 150 characters in a response.
 Only respond to questions related to jobs, careers, hiring, resumes, or interviews.
@@ -18,7 +18,7 @@ If a question is not clearly about a job or career, reply with: "Sorry, I can on
 const ChatBot = () => {
     const [chatBotOpen, setChatBotOpen] = useState(false);
     const [conversationHistory, setConversationHistory] = useState([
-        { role: "system", content: HIRE_HUB_SYSTEM_PROMPT }
+        { role: "system", content: TECH_JOB_HUB_SYSTEM_PROMPT }
     ]);
     const [messages, setMessages] = useState([
         { sender: "bot", text: "Hi there! How can I help you today?" },
@@ -137,7 +137,7 @@ const ChatBot = () => {
                     <div className="flex justify-between items-center">
                         <div className="flex items-center space-x-2">
                             <h2 className="font-bold text-sm text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-                                Hire Hub AI
+                                TechJobHub AI
                             </h2>
                             <FaCircle className="text-green-500 text-xs" />
                         </div>

@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Section */ }
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#535bf2]">About HireHub</h3>
+            <h3 className="text-lg font-semibold mb-4 text-[#535bf2]">About TechJobHub</h3>
             <p className="text-gray-400">
               Connecting talented professionals with innovative companies worldwide.
             </p>
@@ -82,7 +82,7 @@ export default function Footer() {
         {/* Footer Bottom */ }
         <div className="mt-8 pt-8 border-t border-gray-800">
           <p className="text-center text-gray-400">
-            © { new Date().getFullYear() } HireHub. All rights reserved.
+            © { new Date().getFullYear() } TechJobHub. All rights reserved.
           </p>
         </div>
       </div>

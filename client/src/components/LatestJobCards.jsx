@@ -47,7 +47,7 @@ const LatestJobCards = ({ job }) => {
                         </Badge>
                         <span className="text-sm">{ job?.location || 'Location' }</span>
                     </div>
-                    <p className="text-gray-300 font-medium">{ job?.salary ? `${job.salary} LPA` : 'Not disclosed' }</p>
+                    <p className="text-gray-300 font-medium">{ job?.salary ? `R ${job.salary}` : 'Not disclosed' }</p>
 
                     {/* Footer with Date and Details Button */ }
                     <div className="mt-4 flex items-center justify-between">

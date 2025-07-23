@@ -185,13 +185,13 @@ const Signup = () => {
                                     <input
                                         type="radio"
                                         name="role"
-                                        value="student"
-                                        id="student"
+                                        value="jobseeker"
+                                        id="jobseeker"
                                         className="cursor-pointer"
-                                        checked={ input.role === 'student' }
+                                        checked={ input.role === 'jobseeker' }
                                         onChange={ changeEventHandler }
                                     />
-                                    <Label htmlFor="student" className="cursor-pointer">
+                                    <Label htmlFor="jobseeker" className="cursor-pointer">
                                         JobSeeker
                                     </Label>
                                 </div>

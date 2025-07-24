@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
-import cloudinary from "../utils/cloudinary.js";
+import { Client, Storage, Permission, Role } from "node-appwrite";
 
 export const register = async(req, res) => {
     try {
@@ -21,47 +21,30 @@ export const register = async(req, res) => {
 
         let profilePhotoUrl = null;
         const file = req.file;
-        console.log('File received:', file ? { name: file.originalname, size: file.size, mimetype: file.mimetype } : 'No file');
-        
         if (file) {
             try {
-                // Check if Cloudinary is properly configured
-                const isCloudinaryConfigured = 
-                    process.env.CLOUD_NAME && 
-                    process.env.API_KEY && 
-                    process.env.API_SECRET && 
-                    process.env.CLOUD_NAME !== 'dummy_cloud_name' &&
-                    process.env.API_KEY !== 'dummy_api_key' &&
-                    process.env.API_SECRET !== 'dummy_api_secret';
-                
-                console.log('Cloudinary configured:', isCloudinaryConfigured);
-                console.log('Cloudinary config:', {
-                    cloud_name: process.env.CLOUD_NAME,
-                    api_key: process.env.API_KEY ? 'SET' : 'NOT SET',
-                    api_secret: process.env.API_SECRET ? 'SET' : 'NOT SET'
-                });
-                
-                if (!isCloudinaryConfigured) {
-                    console.warn('Cloudinary not properly configured. Skipping file upload.');
-                    profilePhotoUrl = null; // Skip file upload if Cloudinary not configured
-                } else {
-                    const fileUri = getDataUri(file);
-                    console.log('File URI generated, uploading to Cloudinary...');
-                    // Configure upload options based on file type
-                    const uploadOptions = {
-                        resource_type: "auto", // Automatically detect file type (image, video, raw)
-                        folder: "techjobhub/profiles" // Organize files in folders
-                    };
-                    const cloudResponse = await cloudinary.uploader.upload(fileUri.content, uploadOptions);
-                    console.log('Cloudinary upload successful:', {
-                        url: cloudResponse.secure_url,
-                        public_id: cloudResponse.public_id
-                    });
-                    profilePhotoUrl = cloudResponse.secure_url;
-                }
+                // Appwrite client setup
+                const client = new Client()
+                    .setEndpoint(process.env.APPWRITE_ENDPOINT)
+                    .setProject(process.env.APPWRITE_PROJECT_ID)
+                    .setKey(process.env.APPWRITE_API_KEY);
+                const storage = new Storage(client);
+                // Upload file to Appwrite
+                const appwriteFile = await storage.createFile(
+                    process.env.APPWRITE_BUCKET_ID,
+                    'unique()' /* let Appwrite generate ID */,
+                    file.buffer,
+                    [
+                        Permission.read(Role.user('any')), // Adjust permissions as needed
+                        Permission.update(Role.user('any')),
+                        Permission.delete(Role.user('any'))
+                    ]
+                );
+                // Get file preview URL
+                profilePhotoUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${appwriteFile.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
             } catch (error) {
-                console.error('File upload error:', error);
-                profilePhotoUrl = null; // Continue without profile photo if upload fails
+                console.error('Appwrite upload error:', error);
+                profilePhotoUrl = null;
             }
         }
 
@@ -210,17 +193,32 @@ export const updateProfile = async(req, res) => {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
 
         const file = req.file;
-        // cloudinary ayega idhar
-        let cloudResponse = null
+        // Appwrite upload for resume (PDF, DOC, etc.)
+        let resumeFileUrl = null;
         if (file) {
-            const fileUri = getDataUri(file);
-            // Configure upload for resume files (PDFs, DOCs, etc.)
-            const uploadOptions = {
-                resource_type: "auto", // Supports PDFs and other document types
-                folder: "techjobhub/resumes"
-            };
-            cloudResponse = await cloudinary.uploader.upload(fileUri.content, uploadOptions);
+            try {
+                const client = new Client()
+                    .setEndpoint(process.env.APPWRITE_ENDPOINT)
+                    .setProject(process.env.APPWRITE_PROJECT_ID)
+                    .setKey(process.env.APPWRITE_API_KEY);
+                const storage = new Storage(client);
+                const appwriteFile = await storage.createFile(
+                    process.env.APPWRITE_BUCKET_ID,
+                    'unique()',
+                    file.buffer,
+                    [
+                        Permission.read(Role.user('any')),
+                        Permission.update(Role.user('any')),
+                        Permission.delete(Role.user('any'))
+                    ]
+                );
+                resumeFileUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${appwriteFile.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
+            } catch (error) {
+                console.error('Appwrite resume upload error:', error);
+                resumeFileUrl = null;
+            }
         }
+        // Save resumeFileUrl to user.profile.resume if needed
 
 
         let skillsArray;

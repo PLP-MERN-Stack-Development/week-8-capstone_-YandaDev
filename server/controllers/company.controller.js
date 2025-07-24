@@ -1,6 +1,6 @@
 import { Company } from "../models/company.model.js";
 import getDataUri from "../utils/datauri.js";
-import cloudinary from "../utils/cloudinary.js";
+import { Client, Storage, Permission, Role } from "node-appwrite";
 
 export const registerCompany = async(req, res) => {
     try {
@@ -84,7 +84,29 @@ export const updateCompany = async(req, res) => {
         const { name, description, website, location } = req.body;
         let updateData = { name, description, website, location };
 
+        let logoUrl = null;
         if (req.file) {
+            try {
+                const client = new Client()
+                    .setEndpoint(process.env.APPWRITE_ENDPOINT)
+                    .setProject(process.env.APPWRITE_PROJECT_ID)
+                    .setKey(process.env.APPWRITE_API_KEY);
+                const storage = new Storage(client);
+                const appwriteFile = await storage.createFile(
+                    process.env.APPWRITE_BUCKET_ID,
+                    'unique()',
+                    req.file.buffer,
+                    [
+                        Permission.read(Role.user('any')),
+                        Permission.update(Role.user('any')),
+                        Permission.delete(Role.user('any'))
+                    ]
+                );
+                logoUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${appwriteFile.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
+                updateData.logo = logoUrl;
+            } catch (error) {
+                console.error('Appwrite logo upload error:', error);
+            }
         }
 
         console.log('Update data:', updateData);

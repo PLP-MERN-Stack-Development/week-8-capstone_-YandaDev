@@ -74,27 +74,25 @@ export const getCompanyById = async(req, res) => {
 
 export const updateCompany = async(req, res) => {
     try {
-        const { name, description, website, location } = req.body;
+        console.log('---[Company Update Debug]---');
+        console.log('Request params:', req.params);
+        console.log('Request body:', req.body);
+        if (req.file) {
+            console.log('File received:', req.file);
+        }
 
+        const { name, description, website, location } = req.body;
         let updateData = { name, description, website, location };
 
         if (req.file) {
-
-            const file = req.file;
-            const fileUri = getDataUri(file);
-            const uploadOptions = {
-                resource_type: "auto",
-                folder: "techjobhub/company-logos"
-            };
-            const cloudResponse = await cloudinary.uploader.upload(fileUri.content, uploadOptions);
-            const logo = cloudResponse.secure_url;
-
-            updateData.logo = logo;
         }
 
+        console.log('Update data:', updateData);
         const company = await Company.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        console.log('MongoDB update result:', company);
 
         if (!company) {
+            console.log('Company not found for update.');
             return res.status(404).json({
                 message: "Company not found.",
                 success: false
@@ -107,7 +105,7 @@ export const updateCompany = async(req, res) => {
             company
         });
     } catch (error) {
-        console.error(error);
+        console.error('General update error:', error);
         return res.status(500).json({
             message: "An error occurred while updating company information.",
             success: false

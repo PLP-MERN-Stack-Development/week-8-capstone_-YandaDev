@@ -21,6 +21,8 @@ export const register = async(req, res) => {
 
         let profilePhotoUrl = null;
         const file = req.file;
+        console.log('File received:', file ? { name: file.originalname, size: file.size, mimetype: file.mimetype } : 'No file');
+        
         if (file) {
             try {
                 // Check if Cloudinary is properly configured
@@ -32,12 +34,29 @@ export const register = async(req, res) => {
                     process.env.API_KEY !== 'dummy_api_key' &&
                     process.env.API_SECRET !== 'dummy_api_secret';
                 
+                console.log('Cloudinary configured:', isCloudinaryConfigured);
+                console.log('Cloudinary config:', {
+                    cloud_name: process.env.CLOUD_NAME,
+                    api_key: process.env.API_KEY ? 'SET' : 'NOT SET',
+                    api_secret: process.env.API_SECRET ? 'SET' : 'NOT SET'
+                });
+                
                 if (!isCloudinaryConfigured) {
                     console.warn('Cloudinary not properly configured. Skipping file upload.');
                     profilePhotoUrl = null; // Skip file upload if Cloudinary not configured
                 } else {
                     const fileUri = getDataUri(file);
-                    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+                    console.log('File URI generated, uploading to Cloudinary...');
+                    // Configure upload options based on file type
+                    const uploadOptions = {
+                        resource_type: "auto", // Automatically detect file type (image, video, raw)
+                        folder: "techjobhub/profiles" // Organize files in folders
+                    };
+                    const cloudResponse = await cloudinary.uploader.upload(fileUri.content, uploadOptions);
+                    console.log('Cloudinary upload successful:', {
+                        url: cloudResponse.secure_url,
+                        public_id: cloudResponse.public_id
+                    });
                     profilePhotoUrl = cloudResponse.secure_url;
                 }
             } catch (error) {
@@ -56,6 +75,8 @@ export const register = async(req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        console.log('Creating user with profilePhoto:', profilePhotoUrl);
+
         const newUser = await User.create({
             fullname,
             email,
@@ -66,6 +87,11 @@ export const register = async(req, res) => {
             profile: {
                 profilePhoto: profilePhotoUrl,
             },
+        });
+
+        console.log('User created successfully with profile:', {
+            id: newUser._id,
+            profilePhoto: newUser.profile.profilePhoto
         });
 
         return res.status(201).json({
@@ -188,7 +214,12 @@ export const updateProfile = async(req, res) => {
         let cloudResponse = null
         if (file) {
             const fileUri = getDataUri(file);
-            cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+            // Configure upload for resume files (PDFs, DOCs, etc.)
+            const uploadOptions = {
+                resource_type: "auto", // Supports PDFs and other document types
+                folder: "techjobhub/resumes"
+            };
+            cloudResponse = await cloudinary.uploader.upload(fileUri.content, uploadOptions);
         }
 
 

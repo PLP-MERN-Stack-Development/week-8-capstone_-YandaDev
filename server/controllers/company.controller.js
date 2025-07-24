@@ -85,17 +85,6 @@ export const updateCompany = async(req, res) => {
         let updateData = { name, description, website, location };
 
         if (req.file) {
-            try {
-                const file = req.file;
-                const fileUri = getDataUri(file);
-                console.log('File URI:', fileUri);
-                const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-                console.log('Cloudinary response:', cloudResponse);
-                const logo = cloudResponse.secure_url;
-                updateData.logo = logo;
-            } catch (cloudErr) {
-                console.error('Cloudinary upload error:', cloudErr);
-            }
         }
 
         console.log('Update data:', updateData);

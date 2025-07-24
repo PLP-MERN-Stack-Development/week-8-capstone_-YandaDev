@@ -1,42 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
-import { motion } from 'framer-motion';
+import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
+import { Label } from './ui/label';
+import { Button } from './ui/button';
 
-const filterData = [
-    {
-        filterType: "Location",
-        array: ["Cape Town", "Johannesburg", "Durban", "Pretoria", "Port Elizabeth"],
-    },
-    {
-        filterType: "Industry",
-        array: ["Frontend Developer", "Backend Developer", "FullStack Developer"],
-    },
-    {
-        filterType: "Salary",
-        array: ["React.js", "Java", "DevOps", "Swift", "Flutter", "AWS"]
-    },
-];
+const locationOptions = ["Cape Town", "Johannesburg", "Durban", "Pretoria", "Port Elizabeth"];
+const jobTitleOptions = ["Frontend Developer", "Backend Developer", "FullStack Developer", "Designer", "QA Engineer"];
+const datePostedOptions = ["Anytime", "Past Month", "Past Week", "Past 24 Hours"];
+const jobTypeOptions = ["Full Time", "Part Time", "Contract"];
+const experienceLevelOptions = ["Internship", "Entry level", "Associate", "Mid-Senior level", "Director", "Executive"];
+const workArrangementOptions = ["On-site", "Hybrid", "Remote"];
 
 const FilterCard = () => {
     const [selectedFilters, setSelectedFilters] = useState({
         Location: [],
-        Industry: [],
-        Salary: []
+        JobTitle: [],
+        DatePosted: [],
+        JobType: [],
+        ExperienceLevel: [],
+        WorkArrangement: []
     });
 
     const dispatch = useDispatch();
 
-    // Handle selection of filters, toggle on and off
+    // Handle checkbox change for multi-select
     const handleFilterChange = (filterType, value) => {
         setSelectedFilters((prevFilters) => {
             const currentSelections = prevFilters[filterType];
-
-            // If the value is already selected, remove it; otherwise, add it
             const newSelections = currentSelections.includes(value)
                 ? currentSelections.filter((item) => item !== value)
                 : [...currentSelections, value];
-
             return {
                 ...prevFilters,
                 [filterType]: newSelections,
@@ -46,46 +40,56 @@ const FilterCard = () => {
 
     // Create a combined search query from the selected filters
     useEffect(() => {
-        // Convert arrays to strings for the search query
+        // Flatten arrays and join into a string
         const searchQuery = Object.values(selectedFilters)
-            .flat() // flatten arrays into a single array
-            .join(' ') // join all selections into a string
-            .trim(); // remove trailing spaces
+            .flat()
+            .filter(Boolean)
+            .join(' ')
+            .trim();
         dispatch(setSearchedQuery(searchQuery));
     }, [selectedFilters, dispatch]);
 
-    return (
-        <motion.div
-            className="w-full bg-transparent p-5 rounded-md shadow-md sm:w-11/12 md:w-3/4 lg:w-1/2 xl:w-1/3" // Ensuring responsiveness with Tailwind
-            initial={ { opacity: 0 } }
-            animate={ { opacity: 1 } }
-            transition={ { duration: 0.5 } }
-        >
-            <h1 className="font-bold text-lg text-blue-700">Filter Jobs</h1>
-            <hr className="mt-3" />
-            { filterData.map((data, index) => (
-                <div key={ index } className="mt-3">
-                    <h1 className="font-bold text-md text-blue-600">{ data.filterType }</h1>
-                    { data.array.map((item, idx) => {
-                        const itemId = `id${index}-${idx}`;
-                        const isChecked = selectedFilters[data.filterType].includes(item);
+    // Helper to render a multi-select popover for a filter
+    const renderMultiSelect = (label, filterType, options) => (
+        <div className="flex flex-col gap-1 min-w-[180px]">
+            <Label className="text-blue-200">{label}</Label>
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full text-left bg-[#001636] text-blue-100 border-blue-800">
+                        {selectedFilters[filterType].length > 0
+                            ? selectedFilters[filterType].join(', ')
+                            : `Select ${label}`}
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="bg-[#001636] border-blue-800 text-blue-100 w-56 p-2 rounded shadow-lg">
+                    {options.map((option, idx) => (
+                        <div key={option + idx} className="flex items-center gap-2 py-1">
+                            <input
+                                type="checkbox"
+                                id={`${filterType}-${idx}`}
+                                checked={selectedFilters[filterType].includes(option)}
+                                onChange={() => handleFilterChange(filterType, option)}
+                                className="accent-blue-600"
+                            />
+                            <label htmlFor={`${filterType}-${idx}`} className="text-blue-100 cursor-pointer">
+                                {option}
+                            </label>
+                        </div>
+                    ))}
+                </PopoverContent>
+            </Popover>
+        </div>
+    );
 
-                        return (
-                            <div key={ itemId } className="flex items-center space-x-2 my-2">
-                                <input
-                                    type="checkbox"
-                                    id={ itemId }
-                                    checked={ isChecked }
-                                    onChange={ () => handleFilterChange(data.filterType, item) }
-                                    className="text-blue-600"
-                                />
-                                <label htmlFor={ itemId } className="text-blue-600">{ item }</label>
-                            </div>
-                        );
-                    }) }
-                </div>
-            )) }
-        </motion.div>
+    return (
+        <div className="w-full flex flex-row gap-6 items-center justify-center py-6 px-8 rounded-lg shadow-lg flex-wrap bg-gradient-to-r from-[#001636] to-[#00040A] border border-blue-900">
+            {renderMultiSelect('Location', 'Location', locationOptions)}
+            {renderMultiSelect('Job Title', 'JobTitle', jobTitleOptions)}
+            {renderMultiSelect('Date Posted', 'DatePosted', datePostedOptions)}
+            {renderMultiSelect('Job Type', 'JobType', jobTypeOptions)}
+            {renderMultiSelect('Experience Level', 'ExperienceLevel', experienceLevelOptions)}
+            {renderMultiSelect('Work Arrangement', 'WorkArrangement', workArrangementOptions)}
+        </div>
     );
 };
 

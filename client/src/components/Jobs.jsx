@@ -31,55 +31,41 @@ const Jobs = () => {
     }, [allJobs, searchedQuery]);
 
     return (
-        <div className="bg-gray-100 min-h-screen">
+        <div className="min-h-screen w-full bg-gradient-to-br from-[#00040A] to-[#001636]">
             <Navbar />
-            <div className="max-w-7xl mx-auto pt-20 bg-gradient-to-br from-[#00040A] to-[#001636]">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    <div className="lg:hidden w-full">
-                        <button
-                            onClick={ () => setShowFilters(!showFilters) }
-                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md mb-4"
-                        >
-                            { showFilters ? 'Hide Filters' : 'Show Filters' }
-                        </button>
-                    </div>
-                    {/* Filter Sidebar */ }
-                    <div className={ `lg:block ${showFilters ? 'block' : 'hidden'} lg:col-span-1` }>
-                        <FilterCard />
-                    </div>
-
-                    {/* Button to toggle filter card on small screens */ }
-
-
-                    {/* Main Job List Section */ }
-                    <div className="lg:col-span-3">
-                        <motion.div
-                            className="grid grid-cols-1 gap-8"
-                            initial={ { opacity: 0 } }
-                            animate={ { opacity: 1 } }
-                            transition={ { duration: 0.5 } }
-                        >
-                            { filteredJobs.length > 0 ? (
-                                filteredJobs.map((job) => (
-                                    <motion.div
-                                        key={ job?._id }
-                                        layout
-                                        initial={ { opacity: 0, y: 50 } }
-                                        animate={ { opacity: 1, y: 0 } }
-                                        transition={ {
-                                            type: 'spring',
-                                            stiffness: 200,
-                                            damping: 20
-                                        } }
-                                    >
-                                        <Job job={ job } />
-                                    </motion.div>
-                                ))
-                            ) : (
-                                <span className="text-blue-600 font-bold">No jobs found</span>
-                            ) }
-                        </motion.div>
-                    </div>
+            <div className="max-w-7xl mx-auto pt-20">
+                {/* Horizontal Filter Bar */}
+                <div className="w-full mb-8">
+                    <FilterCard />
+                </div>
+                {/* Main Job List Section */}
+                <div className="">
+                    <motion.div
+                        className="grid grid-cols-1 gap-8"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        {filteredJobs.length > 0 ? (
+                            filteredJobs.map((job) => (
+                                <motion.div
+                                    key={job?._id}
+                                    layout
+                                    initial={{ opacity: 0, y: 50 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{
+                                        type: 'spring',
+                                        stiffness: 200,
+                                        damping: 20
+                                    }}
+                                >
+                                    <Job job={job} />
+                                </motion.div>
+                            ))
+                        ) : (
+                            <span className="text-blue-400 font-bold">No jobs found</span>
+                        )}
+                    </motion.div>
                 </div>
             </div>
         </div>

@@ -8,7 +8,7 @@ import Navbar from './shared/Navbar';
 import Footer from './shared/Footer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, Building, Clock } from 'lucide-react';
+import { MapPin, Building, Clock, Home, Laptop2, Shuffle, Wallet } from 'lucide-react';
 import { USER_API_END_POINT, JOB_API_END_POINT, APPLICATION_API_END_POINT } from '@/utils/constant';
 import { setsavedJobs } from '@/redux/authSlice';
 
@@ -123,10 +123,16 @@ const JobDescription = () => {
                                 { singleJob?.createdAt?.split('T')[0] || 'Not specified' }
                             </div>
                             <div className="flex items-center text-xs sm:text-base text-gray-300">
-                                <span className="text-sm sm:text-base mr-2 font-medium">R</span>
+                                <Wallet className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                 { singleJob?.salary?.length === 0
                                     ? 'Not Disclosed'
                                     : `${singleJob?.salary}` }
+                            </div>
+                            <div className="flex items-center text-xs sm:text-base text-gray-300">
+                                {singleJob?.workArrangement === 'On-site' && <Home className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />}
+                                {singleJob?.workArrangement === 'Remote' && <Laptop2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />}
+                                {singleJob?.workArrangement === 'Hybrid' && <Shuffle className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />}
+                                {singleJob?.workArrangement || 'Work arrangement not specified'}
                             </div>
                         </div>
 

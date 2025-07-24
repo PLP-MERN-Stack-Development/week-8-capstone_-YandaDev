@@ -16,6 +16,11 @@ const jobSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    workArrangement: {
+        type: String,
+        enum: ["On-site", "Hybrid", "Remote"],
+        required: true
+    },
     experienceLevel: {
         type: String,
     },

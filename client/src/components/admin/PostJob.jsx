@@ -24,7 +24,13 @@ const PostJob = () => {
         experience: '',
         position: 0,
         companyId: '',
+        workArrangement: '',
     });
+    const workArrangementOptions = ["On-site", "Hybrid", "Remote"];
+
+    const workArrangementChangeHandler = (value) => {
+        setInput({ ...input, workArrangement: value });
+    };
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -167,6 +173,25 @@ const PostJob = () => {
                                 onChange={ changeEventHandler }
                                 className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
                             />
+                        </div>
+                        <div>
+                            <Label>
+                                Work Arrangement <span className="text-red-500">*</span>
+                            </Label>
+                            <Select onValueChange={ workArrangementChangeHandler } value={input.workArrangement}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select Work Arrangement" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {workArrangementOptions.map((option) => (
+                                            <SelectItem key={option} value={option}>
+                                                {option}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div>
                             <Label>

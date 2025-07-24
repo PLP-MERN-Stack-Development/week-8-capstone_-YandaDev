@@ -33,8 +33,8 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
 
     const fileChangeHandler = (e) => {
         const file = e.target.files?.[0];
-        if (file && !file.type.startsWith("image/")) {
-            setFileError("Only images are allowed (.jpeg, .png, .webp)");
+        if (file && !(file.type.startsWith("image/") || file.type === "application/pdf")) {
+            setFileError("Only images (.jpeg, .png, .webp) or PDF files are allowed");
         } else {
             setFileError("");
         }
@@ -156,7 +156,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                             />
                         </div>
 
-                        {/* Display error message if file is not an image */ }
+                        {/* Display error message if file is not an image or PDF */ }
                         { fileError && (
                             <div className="text-red-500 text-sm">
                                 { fileError }

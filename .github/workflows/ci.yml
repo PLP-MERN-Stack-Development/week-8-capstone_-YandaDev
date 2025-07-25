@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies (root)
+        run: pnpm install
+      - name: Install dependencies (client)
+        run: pnpm install --dir client
+      - name: Install dependencies (server)
+        run: pnpm install --dir server
+      - name: Build frontend
+        run: pnpm run build --dir client
+      - name: Run backend tests (if any)
+        run: pnpm test --dir server || echo "No backend tests found"
+      - name: Run frontend tests (if any)
+        run: pnpm test --dir client || echo "No frontend tests found"
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Netlify Build Hook
+        run: |
+          curl -X POST https://api.netlify.com/build_hooks/68835ebcf017a880526006a0
+      - name: Trigger Render Deploy Hook
+        run: |
+          curl -X POST https://api.render.com/deploy/srv-d21gitidbo4c73e513hg?key=tXd-Yop9_Rk

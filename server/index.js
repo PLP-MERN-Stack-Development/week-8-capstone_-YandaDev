@@ -8,9 +8,16 @@ import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import chatbotRoutes from "./routes/chatbotroutes.js";
+import { loggingMiddleware } from "./middlewares/logging.js";
+import { securityMiddleware } from "./middlewares/security.js";
 dotenv.config({});
 
 const app = express();
+
+// Security middleware
+app.use(securityMiddleware);
+// Logging middleware
+app.use(loggingMiddleware);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

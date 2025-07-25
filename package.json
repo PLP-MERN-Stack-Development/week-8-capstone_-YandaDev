@@ -1,9 +1,16 @@
 {
+<<<<<<< HEAD
 	"devDependencies": {
 		"@babel/preset-env": "^7.28.0",
 		"babel-jest": "^29.7.0",
 		"jest": "^29.7.0",
 		"mongodb-memory-server": "^10.1.4",
 		"supertest": "^7.1.4"
+=======
+	"dependencies": {
+		"morgan": "^1.10.1",
+		"helmet": "^8.1.0",
+		"joi": "^17.13.3"
+>>>>>>> 46bfc69c215cd4bd1b24b164cfcf27bdabaaac74
 	}
 }

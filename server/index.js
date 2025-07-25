@@ -1,4 +1,9 @@
 import express from "express";
+import * as Sentry from "@sentry/node";
+Sentry.init({
+  dsn: "https://bc1d1cc609a5cb6758480e3a40c12bd3@o4509728781565952.ingest.us.sentry.io/4509728787529728",
+  tracesSampleRate: 1.0,
+});
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -16,6 +21,8 @@ console.log("=== TEST LOG: Deploying latest code to Render ===");
 
 const app = express();
 
+app.use(Sentry.Handlers.requestHandler());
+
 
 // Security middleware
 app.use(securityMiddleware);
@@ -28,6 +35,7 @@ app.use((req, res, next) => {
 
 // Logging middleware
 app.use(loggingMiddleware);
+app.use(Sentry.Handlers.errorHandler());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -16,8 +16,16 @@ console.log("=== TEST LOG: Deploying latest code to Render ===");
 
 const app = express();
 
+
 // Security middleware
 app.use(securityMiddleware);
+
+// Debug logging middleware to trace all requests
+app.use((req, res, next) => {
+  console.log(`[DEBUG] Incoming request: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Logging middleware
 app.use(loggingMiddleware);
 

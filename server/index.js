@@ -12,6 +12,8 @@ import { loggingMiddleware } from "./middlewares/logging.js";
 import { securityMiddleware } from "./middlewares/security.js";
 dotenv.config({});
 
+console.log("=== TEST LOG: Deploying latest code to Render ===");
+
 const app = express();
 
 // Security middleware

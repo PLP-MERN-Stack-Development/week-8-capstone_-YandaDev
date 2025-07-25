@@ -1,5 +1,5 @@
 import express from "express";
-import * as Sentry from "@sentry/node";
+import Sentry from "@sentry/node";
 Sentry.init({
   dsn: "https://bc1d1cc609a5cb6758480e3a40c12bd3@o4509728781565952.ingest.us.sentry.io/4509728787529728",
   tracesSampleRate: 1.0,

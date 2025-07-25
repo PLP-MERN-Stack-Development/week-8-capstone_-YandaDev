@@ -8,8 +8,8 @@ import { Send, X } from "lucide-react";
 import axios from "axios";
 import './ChatBot.css';
 
-// Mistral AI API integration
-const API_URL = "https://api.mistral.ai/v1/chat/completions";
+// OpenRouter API integration for Mistral model
+const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const TECH_JOB_HUB_SYSTEM_PROMPT = `You are TechJobHub AI, created by TechJobHub Technologies in South Africa. 
 You help job seekers and recruiters connect. IMPORTANT: Keep all responses extremely brief (1-2 short sentences max).
 Never use bullet points or lists. Never write more than 150 characters in a response.
@@ -36,7 +36,8 @@ const ChatBot = () => {
     ]);
 
     const messagesEndRef = useRef(null);
-    const API_KEY = import.meta.env.VITE_MISTRAL_API_KEY;
+    // Use OpenRouter API key from environment variable
+    const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 
     const generateMistralResponse = async (userInput) => {
         try {
@@ -46,18 +47,21 @@ const ChatBot = () => {
                 { role: "user", content: userInput }
             ];
 
+
             const response = await axios.post(
                 API_URL,
                 {
-                    model: "mistral-tiny",
+                    model: "mistralai/mistral-small-3.2-24b-instruct:free",
                     messages: updatedHistory,
                     temperature: 0.7,
-                    max_tokens: 100, // Reduced max tokens for shorter responses
+                    max_tokens: 100,
                 },
                 {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${API_KEY}`,
+                        "Authorization": `Bearer ${API_KEY}`,
+                        "HTTP-Referer": window.location.origin,
+                        "X-Title": "TechJobHub Chatbot"
                     },
                     timeout: 15000,
                 }

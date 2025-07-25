@@ -30,63 +30,60 @@ const HeroSection = () => {
 
             <motion.h1
                 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 text-center tracking-tight user-select text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400"
-                initial={ { opacity: 0, scale: 0.85 } }
-                whileInView={ { opacity: 1, scale: 1 } }
-                transition={ { duration: 0.7 } }
-                viewport={ { once: true } }
+                initial={{ opacity: 0, scale: 0.85 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true }}
             >
-                Find Your Dream Job With TechJobHub
-                {/* <span className="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text user-select">
-
-                </span> */}
+                Find Your Next Tech Role with TechJobHub
             </motion.h1>
 
             <motion.p
                 className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed text-center user-select"
-                initial={ { opacity: 0 } }
-                whileInView={ { opacity: 1 } }
-                transition={ { delay: 0.3, duration: 0.6 } }
-                viewport={ { once: true } }
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                viewport={{ once: true }}
             >
-                Connect with top employers and discover opportunities that match your skills and aspirations. Your next career move starts here.
+                Connect with leading tech companies and startups hiring in software development, cloud, AI, data, and more. Discover roles that match your skills, goals, and tech stack — your next breakthrough starts here.
             </motion.p>
 
             <div className="flex justify-center gap-6 mb-10">
                 <Button
                     size="lg"
                     className=" bg-gradient-to-r from-blue-400 to-purple-500 text-white hover:from-blue-500 hover:to-purple-600 px-8 py-4 rounded-full flex items-center text-lg cursor-pointer"
-                    onClick={ () => navigate('/jobs') }
+                    onClick={() => navigate('/jobs')}
                 >
-                    Find Jobs
+                    🔍 Browse Tech Jobs
                     <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <Button
-                    onClick={ handleNavigation }
+                    onClick={handleNavigation}
                     size="lg"
                     variant="outline"
                     className="border border-gray-600 text-white hover:bg-gray-800 bg-transparent px-8 py-4 rounded-full text-lg cursor-pointer"
                 >
-                    Post a Job
+                    💼 Post a Tech Job
                 </Button>
             </div>
 
             <motion.div
                 className="flex w-full sm:w-[70%] lg:w-[50%] shadow-md border border-gray-700 pl-3 pr-2 py-2 rounded-full items-center gap-4 mx-auto bg-[#001636] bg-opacity-90"
-                initial={ { opacity: 0, y: 50 } }
-                whileInView={ { opacity: 1, y: 0 } }
-                transition={ { duration: 0.8 } }
-                viewport={ { once: true } }
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
             >
                 <Input
                     type="text"
-                    value={ query }
-                    placeholder="Search by job title or skills"
-                    onChange={ (e) => setQuery(e.target.value) }
+                    value={query}
+                    placeholder="Search by role, tech stack or tools"
+                    onChange={(e) => setQuery(e.target.value)}
                     className="w-full p-3 outline-none border-none bg-transparent text-white placeholder-gray-400 rounded-full focus:ring-2 focus:ring-blue-500"
                 />
 
                 <Button
-                    onClick={ searchJobHandler }
+                    onClick={searchJobHandler}
                     className="rounded-full bg-gradient-to-r from-blue-400 to-purple-500 text-white hover:from-blue-500 hover:to-purple-600 px-6 py-3 flex items-center"
                 >
                     <Search className="h-5 w-5 mr-2" />

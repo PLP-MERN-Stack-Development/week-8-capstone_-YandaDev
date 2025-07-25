@@ -1,9 +1,12 @@
 import React from 'react'
 import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
+
 Sentry.init({
   dsn: 'https://bc1d1cc609a5cb6758480e3a40c12bd3@o4509728781565952.ingest.us.sentry.io/4509728787529728',
-  integrations: [new BrowserTracing()],
+  integrations: [
+    Sentry.replayIntegration(),
+    Sentry.browserTracingIntegration(),
+  ],
   tracesSampleRate: 1.0,
 });
 import ReactDOM from 'react-dom/client'

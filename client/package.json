@@ -19,6 +19,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toast": "^1.2.14",
     "@reduxjs/toolkit": "^2.8.2",
+    "@sentry/browser": "^9.42.0",
     "@sentry/react": "^9.42.0",
     "@sentry/tracing": "^7.120.3",
     "appwrite": "^18.2.0",

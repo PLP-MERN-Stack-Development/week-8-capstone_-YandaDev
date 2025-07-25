@@ -5,6 +5,7 @@ export const userRegisterSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).max(128).required(),
   role: Joi.string().valid('jobseeker', 'recruiter', 'admin').required(),
+  phoneNumber: Joi.string().min(5).max(20).optional(),
 });
 
 export const userLoginSchema = Joi.object({

@@ -3,31 +3,46 @@ import { Job } from "../models/job.model.js";
 
 export const postJob = async(req, res) => {
     try {
-        const { title, description, requirements, salary, location, jobType, experience, position, workArrangement, companyId } = req.body;
-        const userId = req.id;
-
-        if (!title || !description || !requirements || !salary || !location || !jobType || !experience || !position || !workArrangement || !companyId) {
-            return res.status(400).json({
-                message: "Somethin is missing.",
-                success: false
-            })
-        };
-
-        // No restriction: allow posting for any company in the database
-
-        const job = await Job.create({
+        const {
             title,
             description,
-            requirements, // store as string
-            salary: Number(salary),
+            requirements,
+            salary,
+            gigPay,
+            commissionRate,
+            salaryType,
+            location,
+            jobType,
+            experience,
+            position,
+            workArrangement,
+            companyId
+        } = req.body;
+        const userId = req.id;
+
+        // Prepare job data based on salaryType
+        const jobData = {
+            title,
+            description,
+            requirements,
             location,
             jobType,
             experienceLevel: experience,
             position,
             company: companyId,
             workArrangement,
-            created_by: userId
-        });
+            created_by: userId,
+            salaryType
+        };
+        if (salaryType === 'fixed') {
+            jobData.salary = salary;
+        } else if (salaryType === 'gig') {
+            jobData.gigPay = gigPay;
+        } else if (salaryType === 'commission') {
+            jobData.commissionRate = commissionRate;
+        }
+
+        const job = await Job.create(jobData);
         return res.status(201).json({
             message: "New job created successfully.",
             job,
@@ -35,6 +50,11 @@ export const postJob = async(req, res) => {
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message: "Failed to create job.",
+            error: error.message,
+            success: false
+        });
     }
 }
 

@@ -15,6 +15,19 @@ const jobSchema = new mongoose.Schema({
     },
     salary: {
         type: Number,
+        required: false
+    },
+    gigPay: {
+        type: String,
+        required: false
+    },
+    commissionRate: {
+        type: Number,
+        required: false
+    },
+    salaryType: {
+        type: String,
+        enum: ['fixed', 'gig', 'commission'],
         required: true
     },
     workArrangement: {

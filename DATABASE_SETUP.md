@@ -2,7 +2,7 @@
 
 This project supports both local MongoDB and MongoDB Atlas configurations for different environments.
 
-## 📋 **Recommended Setup:**
+## **Recommended Setup:**
 
 - **Development**: Local MongoDB (faster, offline-capable)
 - **Production**: MongoDB Atlas (managed, scalable)
@@ -43,7 +43,7 @@ This project supports both local MongoDB and MongoDB Atlas configurations for di
    - Clusters → Connect → Connect Application
 4. **Update `.env.production` with your Atlas URI**
 
-## 🚀 **Environment Configuration**
+## **Environment Configuration**
 
 ### Development (.env.development)
 ```env
@@ -59,7 +59,7 @@ MONGO_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/techjobhub_
 # ... other configs
 ```
 
-## 🏃‍♂️ **Running the Application**
+## **Running the Application**
 
 ```bash
 # Development with local MongoDB (default)
@@ -75,7 +75,7 @@ pnpm run dev:atlas
 pnpm start
 ```
 
-## 📊 **Database Management Tools**
+## **Database Management Tools**
 
 ### For Local MongoDB:
 - **MongoDB Compass** (GUI): https://www.mongodb.com/products/compass
@@ -86,7 +86,7 @@ pnpm start
 - **MongoDB Compass**: Can connect to Atlas clusters
 - **VS Code Extension**: MongoDB for VS Code
 
-## 🔍 **Troubleshooting**
+## **Troubleshooting**
 
 ### Local MongoDB Issues:
 ```bash
@@ -105,7 +105,7 @@ tail -f /usr/local/var/log/mongodb/mongo.log
 - Check firewall settings
 - Ensure correct database name in connection string
 
-## 💡 **Pro Tips**
+## **Pro Tips**
 
 1. **Use different database names** for dev/test/prod environments
 2. **Keep Atlas credentials secure** - never commit to version control

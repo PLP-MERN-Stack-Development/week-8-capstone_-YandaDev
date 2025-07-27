@@ -6,7 +6,7 @@ import { Client, Storage, Permission, Role } from "node-appwrite";
 
 export const register = async(req, res) => {
     try {
-        const { fullname, email, password, role, phoneNumber } = req.body;
+        const { fullname, email, password, role, phoneNumber, companyId } = req.body;
 
         console.log(fullname, email, password, role);
 
@@ -63,12 +63,12 @@ export const register = async(req, res) => {
         const newUser = await User.create({
             fullname,
             email,
-
             password: hashedPassword,
             role,
             phoneNumber,
             profile: {
                 profilePhoto: profilePhotoUrl,
+                company: companyId || undefined,
             },
         });
 
@@ -77,16 +77,12 @@ export const register = async(req, res) => {
             profilePhoto: newUser.profile.profilePhoto
         });
 
+        // Populate companies for response
+        const populatedUser = await User.findById(newUser._id).populate('profile.companies');
         return res.status(201).json({
             message: "Account created successfully.",
             success: true,
-            user: {
-                fullname: newUser.fullname,
-                email: newUser.email,
-                phoneNumber: newUser.phoneNumber,
-                role: newUser.role,
-                profilePhoto: newUser.profile.profilePhoto,
-            },
+            user: populatedUser,
         });
     } catch (error) {
         console.error(error);
@@ -114,7 +110,7 @@ export const login = async(req, res) => {
         }
 
         console.log("Checking user existence");
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email }).populate('profile.companies');
         if (!user) {
             console.log("User not found for email:", email);
             return res.status(400).json({
@@ -190,7 +186,7 @@ export const logout = async(req, res) => {
 
 export const updateProfile = async(req, res) => {
     try {
-        const { fullname, email, phoneNumber, bio, skills } = req.body;
+        const { fullname, email, phoneNumber, bio, skills, companyId } = req.body;
 
         const file = req.file;
         // Appwrite upload for resume (PDF, DOC, etc.)
@@ -240,6 +236,7 @@ export const updateProfile = async(req, res) => {
         if (phoneNumber) user.phoneNumber = phoneNumber
         if (bio) user.profile.bio = bio
         if (skills) user.profile.skills = skillsArray
+        if (companyId) user.profile.company = companyId
 
         // resume comes later here...
         if (cloudResponse) {
@@ -250,18 +247,11 @@ export const updateProfile = async(req, res) => {
 
         await user.save();
 
-        user = {
-            _id: user._id,
-            fullname: user.fullname,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            role: user.role,
-            profile: user.profile
-        }
-
+        // Populate companies for response
+        const populatedUser = await User.findById(user._id).populate('profile.companies');
         return res.status(200).json({
             message: "Profile updated successfully.",
-            user,
+            user: populatedUser,
             success: true
         })
     } catch (error) {
@@ -310,3 +300,17 @@ export const savedJobs = async(req, res) => {
 
     }
 }
+
+// Get the company linked to the current recruiter
+export const getMyCompany = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await User.findById(userId).populate('profile.companies');
+    if (!user || !user.profile.company) {
+      return res.status(404).json({ message: 'No company linked', success: false });
+    }
+    return res.status(200).json({ company: user.profile.company, success: true });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error fetching company', success: false });
+  }
+};

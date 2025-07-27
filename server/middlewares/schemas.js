@@ -17,11 +17,13 @@ export const userLoginSchema = Joi.object({
 export const jobSchema = Joi.object({
   title: Joi.string().min(2).max(100).required(),
   description: Joi.string().min(10).required(),
-  requirements: Joi.array().items(Joi.string()).required(),
+  requirements: Joi.string().min(1).required(),
   salary: Joi.number().min(0).required(),
   workArrangement: Joi.string().valid('On-site', 'Hybrid', 'Remote').required(),
+  experience: Joi.string().allow(''),
   experienceLevel: Joi.string().allow(''),
   location: Joi.string().min(2).required(),
+  jobType: Joi.string().min(2).max(50).required(),
   position: Joi.number().min(1).required(),
   companyId: Joi.string().required(),
 });
@@ -31,4 +33,5 @@ export const companySchema = Joi.object({
   description: Joi.string().min(5).required(),
   website: Joi.string().uri().allow(''),
   location: Joi.string().min(2).required(),
+  logo: Joi.any().optional()
 });

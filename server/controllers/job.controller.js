@@ -3,19 +3,22 @@ import { Job } from "../models/job.model.js";
 
 export const postJob = async(req, res) => {
     try {
-        const { title, description, requirements, salary, location, jobType, experience, position, companyId, workArrangement } = req.body;
+        const { title, description, requirements, salary, location, jobType, experience, position, workArrangement, companyId } = req.body;
         const userId = req.id;
 
-        if (!title || !description || !requirements || !salary || !location || !jobType || !experience || !position || !companyId || !workArrangement) {
+        if (!title || !description || !requirements || !salary || !location || !jobType || !experience || !position || !workArrangement || !companyId) {
             return res.status(400).json({
                 message: "Somethin is missing.",
                 success: false
             })
         };
+
+        // No restriction: allow posting for any company in the database
+
         const job = await Job.create({
             title,
             description,
-            requirements: requirements.split(","),
+            requirements, // store as string
             salary: Number(salary),
             location,
             jobType,

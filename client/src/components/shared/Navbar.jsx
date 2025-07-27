@@ -72,8 +72,8 @@ const Navbar = () => {
                                 <ul className="flex font-sans items-center space-x-6 text-gray-300">
                                     { user && user.role === 'recruiter' ? (
                                         <>
+                                            <Link to='/admin/jobs'><li className='cursor-pointer hover:text-white font-bold'>Jobs</li></Link>
                                             <Link to='/admin/companies'><li className='cursor-pointer hover:text-white font-bold'>Companies</li></Link>
-                                            <Link to='/admin/jobs'><li className='cursor-pointer hover:text-white font-bold' >Jobs</li></Link>
                                         </>
                                     ) : (
                                         <>
@@ -163,12 +163,25 @@ const Navbar = () => {
                         <li className="cursor-pointer hover:text-white">
                             <Link to="/">Home</Link>
                         </li>
-                        <li className="cursor-pointer hover:text-white">
-                            <Link to="/jobs">Jobs</Link>
-                        </li>
-                        <li className="cursor-pointer hover:text-white">
-                            <Link to="/browse">Browse</Link>
-                        </li>
+                        {user && user.role === 'recruiter' ? (
+                            <>
+                                <li className="cursor-pointer hover:text-white">
+                                    <Link to="/admin/jobs">Jobs</Link>
+                                </li>
+                                <li className="cursor-pointer hover:text-white">
+                                    <Link to="/admin/companies">Companies</Link>
+                                </li>
+                            </>
+                        ) : (
+                            <>
+                                <li className="cursor-pointer hover:text-white">
+                                    <Link to="/jobs">Jobs</Link>
+                                </li>
+                                <li className="cursor-pointer hover:text-white">
+                                    <Link to="/browse">Browse</Link>
+                                </li>
+                            </>
+                        )}
                         { !user && (
                             <div className="flex flex-col gap-2">
                                 <Link to="/login">

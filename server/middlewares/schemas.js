@@ -18,7 +18,23 @@ export const jobSchema = Joi.object({
   title: Joi.string().min(2).max(100).required(),
   description: Joi.string().min(10).required(),
   requirements: Joi.string().min(1).required(),
-  salary: Joi.number().min(0).required(),
+  // Flexible salary model: allow salary (fixed), gigPay (per task), or commissionRate
+  salary: Joi.when('salaryType', {
+    is: 'fixed',
+    then: Joi.number().min(0).required(),
+    otherwise: Joi.forbidden()
+  }),
+  gigPay: Joi.when('salaryType', {
+    is: 'gig',
+    then: Joi.string().min(2).required(),
+    otherwise: Joi.forbidden()
+  }),
+  commissionRate: Joi.when('salaryType', {
+    is: 'commission',
+    then: Joi.number().min(0).max(100).required(),
+    otherwise: Joi.forbidden()
+  }),
+  salaryType: Joi.string().valid('fixed', 'gig', 'commission').required(),
   workArrangement: Joi.string().valid('On-site', 'Hybrid', 'Remote').required(),
   experience: Joi.string().allow(''),
   experienceLevel: Joi.string().allow(''),

@@ -21,7 +21,14 @@ const PostJob = () => {
         title: '',
         description: '',
         requirements: '',
-        salary: '',
+        payType: '', // New field
+        minSalary: '',
+        maxSalary: '',
+        currency: 'USD',
+        payPeriod: 'per month',
+        gigDescription: '',
+        commissionDetails: '',
+        salary: '', // legacy, for backend compatibility
         location: '',
         jobType: '',
         experience: '',
@@ -34,15 +41,7 @@ const PostJob = () => {
     // Fetch recruiter's linked companies from profile (assume available in redux store or fetch on mount)
     const { user } = useSelector((store) => store.auth); // adjust according to your state shape
     const linkedCompanies = user?.profile?.companies || [];
-    const selectChangeHandler = (value) => {
-        // Find the company in companies or fallback to previous selectedCompany
-        let label = '';
-        const found = companies.find(c => c._id === value);
-        if (found) label = found.name;
-        else if (selectedCompany.id === value) label = selectedCompany.name;
-        setInput({ ...input, companyId: value });
-        setSelectedCompany({ id: value, name: label });
-    };
+    // selectChangeHandler is defined below, remove this duplicate
     const workArrangementOptions = ["On-site", "Hybrid", "Remote"];
 
     const workArrangementChangeHandler = (value) => {
@@ -68,17 +67,130 @@ const PostJob = () => {
         setInput({ ...input, [e.target.name]: e.target.value });
     };
 
+    // Helper for pay type change
+    const handlePayTypeChange = (e) => {
+        setInput({
+            ...input,
+            payType: e.target.value,
+            // Reset salary-related fields on pay type change
+            minSalary: '',
+            maxSalary: '',
+            currency: 'USD',
+            payPeriod: 'per month',
+            gigDescription: '',
+            commissionDetails: '',
+        });
+    };
 
+    // Unified selectChangeHandler for company selection
+    // Unified selectChangeHandler for company selection
+    const selectChangeHandler = (value) => {
+        // Find the company in companies or fallback to previous selectedCompany
+        let label = '';
+        const found = companies.find(c => c._id === value);
+        if (found) label = found.name;
+        else if (selectedCompany.id === value) label = selectedCompany.name;
+        setInput({ ...input, companyId: value });
+        setSelectedCompany({ id: value, name: label });
+    };
 
+    // Unified submitHandler for flexible salary model
     const submitHandler = async (e) => {
         e.preventDefault();
         if (!input.companyId) {
             toast.error('Please select a company');
             return;
         }
+        if (!input.payType) {
+            toast.error('Please select a pay type');
+            return;
+        }
+        if (!input.description || input.description.length < 10) {
+            toast.error('Description must be at least 10 characters long');
+            return;
+        }
+        // Prepare salary fields for backend
+        let salaryPayload = {};
+        let salaryType = '';
+        if (input.payType === 'Fixed Range Salary') {
+            salaryType = 'fixed';
+            if (!input.minSalary && !input.maxSalary) {
+                toast.error('Please provide at least a minimum or maximum salary');
+                return;
+            }
+            if (input.minSalary && input.maxSalary && Number(input.minSalary) > Number(input.maxSalary)) {
+                toast.error('Minimum salary cannot be greater than maximum salary');
+                return;
+            }
+            salaryPayload = {
+                salary: Number(input.minSalary || input.maxSalary),
+                salaryType,
+            };
+        } else if (input.payType === 'Task/Gig-Based') {
+            salaryType = 'gig';
+            if (!input.gigDescription) {
+                toast.error('Please provide a description for gig/task-based pay');
+                return;
+            }
+            salaryPayload = {
+                gigPay: input.gigDescription,
+                salaryType,
+            };
+        } else if (input.payType === 'Commission Only') {
+            salaryType = 'commission';
+            if (!input.commissionDetails) {
+                toast.error('Please provide commission details');
+                return;
+            }
+            // Extract number from commissionDetails string (e.g. 'commission is 15% per sale')
+            const match = input.commissionDetails.match(/([0-9]+(\.[0-9]+)?)/);
+            let commissionRate = match ? parseFloat(match[1]) : NaN;
+            if (isNaN(commissionRate)) {
+                toast.error('Please enter a valid commission percentage (e.g. 15 or 15%)');
+                return;
+            }
+            salaryPayload = {
+                commissionRate,
+                salaryType,
+            };
+        }
         try {
             setLoading(true);
-            const res = await axios.post(`${JOB_API_END_POINT}/post`, input, {
+            // Remove payType, minSalary, maxSalary, currency, payPeriod, gigDescription, commissionDetails from payload
+            const {
+                payType,
+                minSalary,
+                maxSalary,
+                currency,
+                payPeriod,
+                gigDescription,
+                commissionDetails,
+                ...inputPayload
+            } = input;
+            // For gig-based jobs, ensure salary is not sent at all and position is a number
+            let finalPayload = { ...inputPayload, ...salaryPayload };
+            // Remove all salary fields not relevant to the selected salaryType
+            if (finalPayload.salaryType === 'fixed') {
+                delete finalPayload.gigPay;
+                delete finalPayload.commissionRate;
+            } else if (finalPayload.salaryType === 'gig') {
+                delete finalPayload.salary;
+                delete finalPayload.commissionRate;
+            } else if (finalPayload.salaryType === 'commission') {
+                delete finalPayload.salary;
+                delete finalPayload.gigPay;
+            }
+            // Ensure position is a number
+            if (typeof finalPayload.position === 'string') {
+                finalPayload.position = Number(finalPayload.position);
+            }
+            // Remove duplicate keys by prioritizing salaryPayload values
+            if (salaryPayload.salaryType) finalPayload.salaryType = salaryPayload.salaryType;
+            if (salaryPayload.gigPay) finalPayload.gigPay = salaryPayload.gigPay;
+            if (salaryPayload.salary) finalPayload.salary = salaryPayload.salary;
+            if (salaryPayload.commissionRate) finalPayload.commissionRate = salaryPayload.commissionRate;
+            console.log('Job post payload:', finalPayload);
+            const res = await axios.post(`${JOB_API_END_POINT}/post`, finalPayload, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -220,18 +332,117 @@ const PostJob = () => {
                                 className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
+                        {/* Pay Type Selection */}
                         <div>
                             <Label>
-                                Salary <span className="text-red-500">*</span>
+                                Pay Type <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                type="number"
-                                name="salary"
-                                value={ input.salary }
-                                onChange={ changeEventHandler }
-                                className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
-                            />
+                            <select
+                                name="payType"
+                                value={input.payType}
+                                onChange={handlePayTypeChange}
+                                className="w-full border border-blue-300 rounded-md px-3 py-2 my-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            >
+                                <option value="">Select Pay Type</option>
+                                <option value="Fixed Range Salary">Fixed Range Salary</option>
+                                <option value="Task/Gig-Based">Task/Gig-Based</option>
+                                <option value="Commission Only">Commission Only</option>
+                            </select>
+                            <div className="text-xs text-gray-500 mt-1">
+                                Choose how this job is paid. <br />
+                                <b>Fixed Range Salary:</b> e.g. 5,000–7,000 USD/month<br />
+                                <b>Task/Gig-Based:</b> e.g. "Paid per completed survey"<br />
+                                <b>Commission Only:</b> e.g. "15% per sale"
+                            </div>
                         </div>
+                        {/* Conditional Salary Fields */}
+                        {input.payType === 'Fixed Range Salary' && (
+                            <>
+                                <div>
+                                    <Label>Minimum Salary</Label>
+                                    <Input
+                                        type="number"
+                                        name="minSalary"
+                                        value={input.minSalary}
+                                        onChange={changeEventHandler}
+                                        placeholder="e.g. 5000"
+                                        className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <Label>Maximum Salary</Label>
+                                    <Input
+                                        type="number"
+                                        name="maxSalary"
+                                        value={input.maxSalary}
+                                        onChange={changeEventHandler}
+                                        placeholder="e.g. 7000"
+                                        className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <Label>Currency</Label>
+                                    <select
+                                        name="currency"
+                                        value={input.currency}
+                                        onChange={changeEventHandler}
+                                        className="w-full border border-blue-300 rounded-md px-3 py-2 my-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    >
+                                        <option value="USD">USD</option>
+                                        <option value="EUR">EUR</option>
+                                        <option value="ZAR">ZAR</option>
+                                        <option value="GBP">GBP</option>
+                                        <option value="KES">KES</option>
+                                        <option value="NGN">NGN</option>
+                                        <option value="INR">INR</option>
+                                        {/* Add more as needed */}
+                                    </select>
+                                </div>
+                                <div>
+                                    <Label>Pay Period</Label>
+                                    <select
+                                        name="payPeriod"
+                                        value={input.payPeriod}
+                                        onChange={changeEventHandler}
+                                        className="w-full border border-blue-300 rounded-md px-3 py-2 my-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    >
+                                        <option value="per month">per month</option>
+                                        <option value="per year">per year</option>
+                                        <option value="per week">per week</option>
+                                        <option value="per day">per day</option>
+                                        <option value="per hour">per hour</option>
+                                    </select>
+                                </div>
+                            </>
+                        )}
+                        {input.payType === 'Task/Gig-Based' && (
+                            <div className="col-span-2">
+                                <Label>Gig/Task Pay Description</Label>
+                                <Input
+                                    type="text"
+                                    name="gigDescription"
+                                    value={input.gigDescription}
+                                    onChange={changeEventHandler}
+                                    placeholder="e.g. Pay per completed task, rate varies"
+                                    className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                                <div className="text-xs text-gray-500 mt-1">Describe how pay is determined for this gig or task-based job.</div>
+                            </div>
+                        )}
+                        {input.payType === 'Commission Only' && (
+                            <div className="col-span-2">
+                                <Label>Commission Details</Label>
+                                <Input
+                                    type="text"
+                                    name="commissionDetails"
+                                    value={input.commissionDetails}
+                                    onChange={changeEventHandler}
+                                    placeholder="e.g. 15% per sale"
+                                    className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                                <div className="text-xs text-gray-500 mt-1">Describe the commission structure for this job.</div>
+                            </div>
+                        )}
                         <div>
                             <Label>
                                 Location <span className="text-red-500">*</span>
@@ -342,6 +553,5 @@ const PostJob = () => {
             <Footer />
         </div>
     );
-};
-
+}
 export default PostJob;

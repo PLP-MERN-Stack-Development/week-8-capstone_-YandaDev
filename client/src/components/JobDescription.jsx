@@ -122,11 +122,18 @@ const JobDescription = () => {
                                 <Clock className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                 { singleJob?.createdAt?.split('T')[0] || 'Not specified' }
                             </div>
+                            {/* Salary, Gig Pay, or Commission Rate */}
                             <div className="flex items-center text-xs sm:text-base text-gray-300">
-                                <Wallet className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                                { singleJob?.salary?.length === 0
-                                    ? 'Not Disclosed'
-                                    : `${singleJob?.salary}` }
+                                <span className="flex-shrink-0 flex items-start pt-1 mr-2"><Wallet className="h-4 w-4 sm:h-5 sm:w-5" /></span>
+                                <span className="break-words whitespace-pre-line">
+                                    {singleJob?.salaryType === 'fixed' && (singleJob?.salary || singleJob?.salary === 0)
+                                        ? `Salary: ${singleJob.salary}`
+                                        : singleJob?.salaryType === 'gig' && singleJob?.gigPay
+                                        ? `Gig Pay: ${singleJob.gigPay}`
+                                        : singleJob?.salaryType === 'commission' && (singleJob?.commissionRate || singleJob?.commissionRate === 0)
+                                        ? `Commission: ${singleJob.commissionRate}% per sale`
+                                        : 'Not Disclosed'}
+                                </span>
                             </div>
                             <div className="flex items-center text-xs sm:text-base text-gray-300">
                                 {singleJob?.workArrangement === 'On-site' && <Home className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />}
@@ -156,7 +163,9 @@ const JobDescription = () => {
                         <div className="mt-6 sm:mt-8">
                             <h2 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-4">Applications</h2>
                             <p className="text-xs sm:text-base text-gray-300">
-                                { singleJob?.applications?.length || 0 } applicants
+                                {singleJob?.applications?.length > 0
+                                    ? `${singleJob.applications.length} applicant${singleJob.applications.length > 1 ? 's' : ''}`
+                                    : 'Be the first to apply!'}
                             </p>
                         </div>
                     </Card>

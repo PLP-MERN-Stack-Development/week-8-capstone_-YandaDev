@@ -59,14 +59,14 @@ const CompanyCreate = () => {
 
     return (
         <motion.div
-            className="bg-white min-h-screen"
+            className="bg-white min-h-screen flex flex-col"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
         >
             <Navbar />
-            <div className="max-w-4xl mx-auto my-10 p-5">
+            <div className="max-w-4xl mx-auto my-10 p-5 flex-1">
                 <div className="my-10">
                     <h1 className="font-bold text-2xl text-blue-600">Your Company Name</h1>
                     <p className="text-gray-500">What would you like to give your company name? You can change this later.</p>

@@ -124,24 +124,28 @@ export const registerCompany = async(req, res) => {
 }
 
 export const getCompany = async(req, res) => {
-        try {
-            const userId = req.id; // logged in user id
-            const companies = await Company.find({ userId });
-            if (!companies) {
-                return res.status(404).json({
-                    message: "Companies not found.",
-                    success: false
-                })
-            }
-            return res.status(200).json({
-                companies,
-                success: true
-            })
-        } catch (error) {
-            console.log(error);
+    try {
+        // Find the user and get their associated companies
+        const user = req.user || (await import('../models/user.model.js').then(m => m.User.findById(req.id).populate('profile.companies')));
+        if (!user || !user.profile || !user.profile.companies) {
+            return res.status(404).json({
+                message: "No associated companies found.",
+                success: false
+            });
         }
+        // user.profile.companies is an array of Company objects (populated)
+        return res.status(200).json({
+            companies: user.profile.companies,
+            success: true
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Error fetching associated companies.",
+            success: false
+        });
     }
-    // get company by id
+}
 
 export const getCompanyById = async(req, res) => {
     try {

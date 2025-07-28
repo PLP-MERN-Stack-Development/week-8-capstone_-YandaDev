@@ -248,7 +248,7 @@ const PostJob = () => {
                 transition={ { duration: 0.6 } }
             >
                 {/* Company Search Section */}
-                <div className="w-full max-w-4xl bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
+                <div className="w-full max-w-4xl bg-blue-50 border border-blue-200 rounded-md p-4 mb-6 mt-8 md:mt-12">
                     <div className="flex flex-col md:flex-row md:items-end gap-2">
                         <div className="flex-1">
                             <Label>Search for a company by name</Label>

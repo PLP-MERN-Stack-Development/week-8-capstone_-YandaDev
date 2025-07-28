@@ -75,20 +75,29 @@ const Profile = () => {
                                 ) }
                             </div>
                         </div>
-                        <div className="my-5">
+                        <div className="my-5 flex flex-col gap-2">
                             <Label className="text-md font-bold text-white">Resume</Label>
-                            { isResume ? (
-                                <a
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    href={ user?.profile?.resume }
-                                    className="text-blue-500 hover:underline"
+                            <div className="flex items-center gap-4">
+                                { isResume ? (
+                                    <a
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        href={ user?.profile?.resume }
+                                        className="text-blue-500 hover:underline"
+                                    >
+                                        { user?.profile?.resumeOriginalName }
+                                    </a>
+                                ) : (
+                                    <span>NA</span>
+                                ) }
+                                <Button
+                                    variant="outline"
+                                    className="text-blue-600 border-blue-600 hover:bg-blue-600 hover:text-white"
+                                    onClick={ () => setOpen(true) }
                                 >
-                                    { user?.profile?.resumeOriginalName }
-                                </a>
-                            ) : (
-                                <span>NA</span>
-                            ) }
+                                    Update Resume
+                                </Button>
+                            </div>
                         </div>
                     </div>
 

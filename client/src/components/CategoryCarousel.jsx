@@ -57,8 +57,7 @@ const CategoryCarousel = () => {
                         ))
                     }
                 </CarouselContent>
-
-                {/* Previous and Next buttons */ }
+                {/* Previous and Next buttons */}
                 <CarouselPrevious className="text-blue-900 hover:text-[#6A38C2]" />
                 <CarouselNext className="text-blue-900 hover:text-[#6A38C2]" />
             </Carousel>
@@ -67,3 +66,4 @@ const CategoryCarousel = () => {
 };
 
 export default CategoryCarousel;
+// ...existing code...

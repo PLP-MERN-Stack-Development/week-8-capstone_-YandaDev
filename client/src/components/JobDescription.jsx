@@ -76,6 +76,17 @@ const JobDescription = () => {
         <>
             <Navbar />
             <main className="pt-20 pb-16 bg-gradient-to-br from-[#00040A] to-[#001636] min-h-screen text-white px-4 sm:px-6">
+                <style>{`
+                  .job-description-content h1, .job-description-content h2, .job-description-content h3 {
+                    font-weight: bold;
+                    margin-top: 1em;
+                    margin-bottom: 0.5em;
+                    color: #fff;
+                  }
+                  .job-description-content h1 { font-size: 1.5em; }
+                  .job-description-content h2 { font-size: 1.25em; }
+                  .job-description-content h3 { font-size: 1.1em; }
+                `}</style>
                 <div className="max-w-4xl mx-auto">
                     <Card className="bg-gray-900 border-gray-800 p-4 sm:p-8">
                         {/* Job Header */ }
@@ -145,12 +156,18 @@ const JobDescription = () => {
 
                         <div className="mt-6 sm:mt-8">
                             <h2 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-4">Job Description</h2>
-                            <p className="text-xs sm:text-base text-gray-300">{ singleJob?.description || 'Description not available' }</p>
+                            <div
+                                className="job-description-content text-xs sm:text-base text-gray-300"
+                                dangerouslySetInnerHTML={{ __html: singleJob?.description || 'Description not available' }}
+                            />
                         </div>
 
                         <div className="mt-6 sm:mt-8">
                             <h2 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-4">Requirements</h2>
-                            <p className="text-xs sm:text-base text-gray-300">{ singleJob?.requirements || 'Description not available' }</p>
+                            <div
+                                className="job-description-content text-xs sm:text-base text-gray-300"
+                                dangerouslySetInnerHTML={{ __html: singleJob?.requirements || 'Description not available' }}
+                            />
                         </div>
 
                         {/* Experience */ }

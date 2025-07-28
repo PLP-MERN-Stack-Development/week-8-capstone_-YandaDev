@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 import useGetAllCompanies from '@/hooks/useGetAllCompanies';
 import Footer from '../shared/Footer';
@@ -312,24 +314,24 @@ const PostJob = () => {
                             <Label>
                                 Description <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                type="text"
-                                name="description"
-                                value={ input.description }
-                                onChange={ changeEventHandler }
+                            <ReactQuill
+                                theme="snow"
+                                value={input.description}
+                                onChange={value => setInput({ ...input, description: value })}
                                 className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter job description..."
                             />
                         </div>
                         <div>
                             <Label>
                                 Requirements <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                type="text"
-                                name="requirements"
-                                value={ input.requirements }
-                                onChange={ changeEventHandler }
+                            <ReactQuill
+                                theme="snow"
+                                value={input.requirements}
+                                onChange={value => setInput({ ...input, requirements: value })}
                                 className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter job requirements..."
                             />
                         </div>
                         {/* Pay Type Selection */}

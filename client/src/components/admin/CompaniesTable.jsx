@@ -21,10 +21,9 @@ const CompaniesTable = () => {
     }, [companies, searchCompanyByText]);
 
     return (
-        <div className="bg-white rounded-lg shadow-md p-5 transition-all duration-300">
-            <Table>
-                <TableCaption>A list of your recent registered companies</TableCaption>
-                <TableHeader>
+        <div className="border border-blue-300 rounded-xl bg-white shadow-md p-5 transition-all duration-300 w-full">
+            <Table className="w-full block md:table">
+                <TableHeader className="hidden md:table-header-group">
                     <TableRow>
                         <TableHead>Logo</TableHead>
                         <TableHead>Name</TableHead>
@@ -33,31 +32,37 @@ const CompaniesTable = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {
-                        filterCompany?.map((company) => (
+                    {filterCompany && filterCompany.length > 0 ? (
+                        filterCompany.map((company) => (
                             <motion.tr
-                                key={ company._id }
-                                className="hover:bg-blue-50"
-                                initial={ { opacity: 0, y: -10 } }
-                                animate={ { opacity: 1, y: 0 } }
-                                exit={ { opacity: 0, y: -10 } }
-                                transition={ { duration: 0.2 } }
+                                key={company._id}
+                            className="hover:bg-blue-50 border-b border-gray-200 md:table-row"
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
                             >
-                                <TableCell>
-                                    <Avatar className="w-10 h-10">
-                                        <AvatarImage src={ company.logo } alt={ company.name } />
+                            <TableCell className="py-4 px-6 whitespace-nowrap block md:table-cell">
+                                    <span className="font-semibold md:hidden">Logo: </span>
+                                    <Avatar className="w-10 h-10 inline-block align-middle">
+                                        <AvatarImage src={company.logo} alt={company.name} />
                                     </Avatar>
                                 </TableCell>
-                                <TableCell>{ company.name }</TableCell>
-                                <TableCell>{ company.createdAt.split("T")[0] }</TableCell>
-                                <TableCell className="text-right">
+                            <TableCell className="py-4 px-6 whitespace-nowrap block md:table-cell">
+                                    <span className="font-semibold md:hidden">Name: </span>{company.name}
+                                </TableCell>
+                            <TableCell className="py-4 px-6 whitespace-nowrap block md:table-cell">
+                                    <span className="font-semibold md:hidden">Date: </span>{company.createdAt.split("T")[0]}
+                                </TableCell>
+                            <TableCell className="py-4 px-6 text-right whitespace-nowrap block md:table-cell">
+                                    <span className="font-semibold md:hidden">Action: </span>
                                     <Popover>
                                         <PopoverTrigger>
                                             <MoreHorizontal className="cursor-pointer" />
                                         </PopoverTrigger>
                                         <PopoverContent className="w-32">
                                             <div
-                                                onClick={ () => navigate(`/admin/companies/${company._id}`) }
+                                                onClick={() => navigate(`/admin/companies/${company._id}`)}
                                                 className="flex items-center gap-2 p-2 hover:bg-gray-100 cursor-pointer transition-all duration-300"
                                             >
                                                 <Edit2 className="w-4" />
@@ -68,9 +73,16 @@ const CompaniesTable = () => {
                                 </TableCell>
                             </motion.tr>
                         ))
-                    }
+                    ) : (
+                        <TableRow className="block md:table-row">
+                            <TableCell colSpan={4} className="text-center text-gray-500 py-4 block md:table-cell">
+                            A list of companies you are associated with
+                            </TableCell>
+                        </TableRow>
+                    )}
                 </TableBody>
             </Table>
+        
         </div>
     );
 };

@@ -54,12 +54,11 @@ const AdminJobsTable = () => {
             initial={ { opacity: 0 } }
             animate={ { opacity: 1 } }
             transition={ { duration: 0.5 } }
-            className="overflow-x-auto"
+            className="w-full"
         >
-            <Table className="border border-blue-300 rounded-xl min-w-full">
-                <TableCaption className="text-center">A list of your recently posted jobs</TableCaption>
-                <TableHeader>
-
+            <div className="border border-blue-300 rounded-xl bg-white shadow-md p-5 transition-all duration-300 w-full">
+                <Table className="w-full block md:table">
+                <TableHeader className="hidden md:table-header-group">
                     <TableRow>
                         <TableHead className="py-4 px-6">Company Name</TableHead>
                         <TableHead className="py-4 px-6">Role</TableHead>
@@ -74,12 +73,19 @@ const AdminJobsTable = () => {
                             initial={ { opacity: 0 } }
                             animate={ { opacity: 1 } }
                             transition={ { duration: 0.3 } }
-                            className="hover:bg-blue-100 border-t border-gray-200"
+                            className="hover:bg-blue-50 border-b border-gray-200 block md:table-row md:mb-0"
                         >
-                            <TableCell className="py-4 px-6 whitespace-nowrap">{ job?.company?.name }</TableCell>
-                            <TableCell className="py-4 px-6 whitespace-nowrap">{ job?.title }</TableCell>
-                            <TableCell className="py-4 px-6 whitespace-nowrap">{ job?.createdAt.split("T")[0] }</TableCell>
-                            <TableCell className="py-4 px-6 text-right cursor-pointer">
+                            <TableCell className="py-4 px-6 whitespace-nowrap block md:table-cell">
+                                <span className="font-semibold md:hidden">Company Name: </span>{ job?.company?.name }
+                            </TableCell>
+                            <TableCell className="py-4 px-6 whitespace-nowrap block md:table-cell">
+                                <span className="font-semibold md:hidden">Role: </span>{ job?.title }
+                            </TableCell>
+                            <TableCell className="py-4 px-6 whitespace-nowrap block md:table-cell">
+                                <span className="font-semibold md:hidden">Date: </span>{ job?.createdAt.split("T")[0] }
+                            </TableCell>
+                            <TableCell className="py-4 px-6 text-right cursor-pointer block md:table-cell">
+                                <span className="font-semibold md:hidden">Action: </span>
                                 <Popover>
                                     <PopoverTrigger>
                                         <MoreHorizontal className="text-blue-600 hover:text-blue-500" />
@@ -99,7 +105,6 @@ const AdminJobsTable = () => {
                                             <Eye className="w-4" />
                                             <span>Applicants</span>
                                         </div>
-
                                         <div
                                             onClick={ () => handleDeleteJob(job?._id) }
                                             className="flex items-center gap-2 cursor-pointer text-blue-600 hover:text-blue-500 p-2"
@@ -107,13 +112,14 @@ const AdminJobsTable = () => {
                                             <Delete className="w-4" />
                                             <span>Delete</span>
                                         </div>
-                                    </PopoverContent>s
+                                    </PopoverContent>
                                 </Popover>
                             </TableCell>
                         </motion.tr>
                     )) }
                 </TableBody>
-            </Table>
+                </Table>
+            </div>
         </motion.div>
     );
 }

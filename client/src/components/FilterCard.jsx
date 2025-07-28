@@ -15,7 +15,7 @@ const workArrangementOptions = ["On-site", "Hybrid", "Remote"];
 const FilterCard = () => {
     // Restore renderMultiSelect for dropdown filters
     const renderMultiSelect = (label, filterType, options) => (
-        <div className="flex flex-col gap-1 min-w-[180px]">
+        <div className="flex flex-col gap-1 min-w-[180px] w-[180px]">
             <Label className="text-blue-200">{label}</Label>
             <Popover>
                 <PopoverTrigger asChild>
@@ -98,55 +98,73 @@ const FilterCard = () => {
 
     // Render multi-text input filter
     const renderMultiTextInput = (label, filterType, inputValue, setInputValue) => (
-        <div className="flex flex-col gap-1 min-w-[220px]">
-            <Label className="text-blue-200">{label}</Label>
-            <div className="flex flex-wrap gap-2 mb-2">
-                {selectedFilters[filterType].map((val, idx) => (
-                    <span key={val + idx} className="bg-blue-700 text-white px-2 py-1 rounded flex items-center gap-1">
-                        {val}
-                        <button
-                            type="button"
-                            className="ml-1 text-xs text-white hover:text-red-400"
-                            onClick={() => handleRemoveTextFilter(filterType, val)}
-                        >
-                            ×
-                        </button>
-                    </span>
-                ))}
+        <div className="flex flex-col gap-1 min-w-[180px] w-[180px]">
+            <Label className="text-blue-200 mb-2 mt-2">{label}</Label>
+            <div className="relative w-full">
+                <input
+                    type="text"
+                    value={
+                        inputValue !== ""
+                            ? inputValue
+                            : (selectedFilters[filterType].length > 0 ? selectedFilters[filterType][0] : "")
+                    }
+                    onChange={e => setInputValue(e.target.value)}
+                    onKeyDown={e => handleTextInputKeyDown(e, filterType, inputValue)}
+                    placeholder={
+                        inputValue === "" && selectedFilters[filterType].length === 0
+                            ? `Enter ${label.toLowerCase()} and press enter`
+                            : ""
+                    }
+                    className="w-full px-3 py-2 rounded border border-blue-800 bg-[#001636] text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm h-10 -mt-6 pr-2 placeholder:text-blue-300"
+                />
+                {(inputValue || selectedFilters[filterType].length > 0) && (
+                    <button
+                        type="button"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-300 hover:text-red-400 focus:outline-none"
+                        onClick={() => {
+                            setInputValue("");
+                            setSelectedFilters(prev => ({
+                                ...prev,
+                                [filterType]: []
+                            }));
+                        }}
+                        aria-label={`Clear ${label} input`}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="9" fill="currentColor" opacity="0.15" />
+                            <path d="M13 7L7 13M7 7l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                    </button>
+                )}
             </div>
-            <input
-                type="text"
-                value={inputValue}
-                onChange={e => setInputValue(e.target.value)}
-                onKeyDown={e => handleTextInputKeyDown(e, filterType, inputValue)}
-                placeholder={`Type ${label} and press Enter`}
-                className="w-full px-3 py-2 rounded border border-blue-800 bg-[#001636] text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
         </div>
     );
 
     return (
-        <div className="w-full flex flex-row gap-6 items-center justify-center py-6 px-8 rounded-lg shadow-lg flex-wrap bg-gradient-to-r from-[#001636] to-[#00040A] border border-blue-900">
-            {renderMultiTextInput('Location', 'Location', locationInput, setLocationInput)}
-            {renderMultiTextInput('Job Title', 'JobTitle', jobTitleInput, setJobTitleInput)}
-            {renderMultiSelect('Date Posted', 'DatePosted', datePostedOptions)}
-            {renderMultiSelect('Job Type', 'JobType', jobTypeOptions)}
-            {renderMultiSelect('Experience Level', 'ExperienceLevel', experienceLevelOptions)}
-            {renderMultiSelect('Work Arrangement', 'WorkArrangement', workArrangementOptions)}
-            <Button
-                variant="outline"
-                className="ml-4 text-blue-600 border-blue-600 hover:bg-blue-600 hover:text-white"
-                onClick={() => setSelectedFilters({
-                    Location: [],
-                    JobTitle: [],
-                    DatePosted: [],
-                    JobType: [],
-                    ExperienceLevel: [],
-                    WorkArrangement: []
-                })}
-            >
-                Clear Filters
-            </Button>
+        <div className="w-full max-w-full mx-auto flex flex-row items-center py-6 px-4 rounded-2xl shadow-2xl bg-gradient-to-br from-[#001636] to-[#00040A] border border-blue-900 gap-4">
+            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiTextInput('Location', 'Location', locationInput, setLocationInput)}</div>
+            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiTextInput('Job Title', 'JobTitle', jobTitleInput, setJobTitleInput)}</div>
+            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiSelect('Date Posted', 'DatePosted', datePostedOptions)}</div>
+            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiSelect('Job Type', 'JobType', jobTypeOptions)}</div>
+            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiSelect('Experience Level', 'ExperienceLevel', experienceLevelOptions)}</div>
+            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiSelect('Work Arrangement', 'WorkArrangement', workArrangementOptions)}</div>
+            <div className="flex flex-col min-w-[70px] w-[70px] justify-center items-center mt-4">
+                <Button
+                    variant="outline"
+                    className="w-full h-8 text-xs font-semibold border-2 border-blue-500 text-blue-500 bg-white hover:bg-blue-500 hover:text-white rounded-lg px-0 py-1 shadow transition-all duration-200"
+                    style={{ alignSelf: 'flex-start', minWidth: '60px', maxWidth: '70px' }}
+                    onClick={() => setSelectedFilters({
+                        Location: [],
+                        JobTitle: [],
+                        DatePosted: [],
+                        JobType: [],
+                        ExperienceLevel: [],
+                        WorkArrangement: []
+                    })}
+                >
+                    Clear
+                </Button>
+            </div>
         </div>
     );
 };

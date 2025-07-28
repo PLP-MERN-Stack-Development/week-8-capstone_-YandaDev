@@ -8,7 +8,14 @@ const jobSlice = createSlice({
         singleJob: null,
         searchJobByText: "",
         allAppliedJobs: [],
-        searchedQuery: "",
+        activeFilters: {
+            Location: [],
+            JobTitle: [],
+            DatePosted: [],
+            JobType: [],
+            ExperienceLevel: [],
+            WorkArrangement: []
+        },
     },
     reducers: {
         // actions
@@ -28,7 +35,11 @@ const jobSlice = createSlice({
             state.allAppliedJobs = action.payload;
         },
         setSearchedQuery: (state, action) => {
-            state.searchedQuery = action.payload;
+            if (typeof action.payload === 'string') {
+                state.searchJobByText = action.payload;
+            } else {
+                state.activeFilters = action.payload;
+            }
         }
     }
 });

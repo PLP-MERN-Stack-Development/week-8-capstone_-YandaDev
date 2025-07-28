@@ -1,4 +1,5 @@
 import { Job } from "../models/job.model.js";
+import Company from "../models/company.model.js";
 
 
 export const postJob = async(req, res) => {
@@ -61,15 +62,23 @@ export const postJob = async(req, res) => {
 export const getAllJobs = async(req, res) => {
         try {
             const keyword = req.query.keyword || "";
-            const query = {
-                $or: [
-                    { title: { $regex: keyword, $options: "i" } },
-                    { description: { $regex: keyword, $options: "i" } },
-                ]
-            };
-            const jobs = await Job.find(query).populate({
-                path: "company"
-            }).sort({ createdAt: -1 });
+            // Search by title, description, and company name
+            let jobs = [];
+            if (keyword) {
+                // First, find companies matching the keyword
+                const companies = await Company.find({ name: { $regex: keyword, $options: "i" } }).select('_id');
+                const companyIds = companies.map(c => c._id);
+                const query = {
+                    $or: [
+                        { title: { $regex: keyword, $options: "i" } },
+                        { description: { $regex: keyword, $options: "i" } },
+                        { company: { $in: companyIds } }
+                    ]
+                };
+                jobs = await Job.find(query).populate({ path: "company" }).sort({ createdAt: -1 });
+            } else {
+                jobs = await Job.find({}).populate({ path: "company" }).sort({ createdAt: -1 });
+            }
             if (!jobs) {
                 return res.status(404).json({
                     message: "Jobs not found.",

@@ -39,32 +39,37 @@ const AppliedJobTable = () => {
                     </TableHeader>
                     <TableBody>
                         { allAppliedJobs?.length > 0 ? (
-                            allAppliedJobs?.map((appliedJob, index) => (
-                                <motion.tr
-                                    key={ appliedJob._id }
-                                    className="hover:bg-gray-700 transition-colors duration-300 text-gray-200"
-                                    initial={ { opacity: 0, y: 10 } }
-                                    animate={ { opacity: 1, y: 0 } }
-                                    transition={ { duration: 0.3, delay: index * 0.1 } }
-                                >
-                                    <TableCell className="border-b border-gray-700 px-4 py-3">
-                                        { appliedJob?.job.title }
-                                    </TableCell>
-                                    <TableCell className="border-b border-gray-700 px-4 py-3">
-                                        { appliedJob?.job.company.name }
-                                    </TableCell>
-                                    <TableCell className="border-b border-gray-700 px-4 py-3">
-                                        { new Date(appliedJob.createdAt).toLocaleDateString() }
-                                    </TableCell>
-                                    <TableCell
-                                        className={ `border-b border-gray-700 px-4 py-3 ${getStatusColor(
-                                            appliedJob?.status
-                                        )}` }
+                            allAppliedJobs?.map((appliedJob, index) => {
+                                // Defensive: handle missing job or company
+                                const job = appliedJob?.job || {};
+                                const company = job?.company || {};
+                                return (
+                                    <motion.tr
+                                        key={ appliedJob._id }
+                                        className="hover:bg-gray-700 transition-colors duration-300 text-gray-200"
+                                        initial={ { opacity: 0, y: 10 } }
+                                        animate={ { opacity: 1, y: 0 } }
+                                        transition={ { duration: 0.3, delay: index * 0.1 } }
                                     >
-                                        { appliedJob?.status || 'Unknown' }
-                                    </TableCell>
-                                </motion.tr>
-                            ))
+                                        <TableCell className="border-b border-gray-700 px-4 py-3">
+                                            { job?.title || <span className="text-gray-500">N/A</span> }
+                                        </TableCell>
+                                        <TableCell className="border-b border-gray-700 px-4 py-3">
+                                            { company?.name || <span className="text-gray-500">N/A</span> }
+                                        </TableCell>
+                                        <TableCell className="border-b border-gray-700 px-4 py-3">
+                                            { appliedJob?.createdAt ? new Date(appliedJob.createdAt).toLocaleDateString() : <span className="text-gray-500">N/A</span> }
+                                        </TableCell>
+                                        <TableCell
+                                            className={ `border-b border-gray-700 px-4 py-3 ${getStatusColor(
+                                                appliedJob?.status
+                                            )}` }
+                                        >
+                                            { appliedJob?.status || 'Unknown' }
+                                        </TableCell>
+                                    </motion.tr>
+                                );
+                            })
                         ) : (
                             <tr>
                                 <td colSpan="4" className="text-center py-4 text-gray-500">

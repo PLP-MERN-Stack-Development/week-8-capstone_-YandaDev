@@ -6,30 +6,77 @@ import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 
 const Jobs = () => {
-    const { allJobs, searchedQuery } = useSelector(store => store.job);
+    const { allJobs, activeFilters } = useSelector(store => store.job);
     const [filteredJobs, setFilteredJobs] = useState([]);
     const [showFilters, setShowFilters] = useState(false); // State to control filter card visibility
 
-    useEffect(() => {
-        if (searchedQuery) {
-            const queryWords = searchedQuery.toLowerCase().split(" ");
-            const filtered = allJobs.filter(job => {
-                const searchFields = [
-                    job.title,
-                    job.description,
-                    job.requirements?.join(" "), // Join requirements array into a single string
-                    job.location
-                ];
-                return queryWords.some(word =>
-                    searchFields.some(field => field?.toLowerCase().includes(word))
+    // Utility for fuzzy matching (simple Levenshtein distance)
+    function levenshtein(a, b) {
+        if (!a || !b) return Math.max(a?.length || 0, b?.length || 0);
+        const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(null));
+        for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+        for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j - 1] + cost
                 );
-            });
-            setFilteredJobs(filtered);
-        } else {
-            setFilteredJobs(allJobs);
+            }
         }
-    }, [allJobs, searchedQuery]);
+        return matrix[a.length][b.length];
+    }
 
+    // ...existing code...
+    useEffect(() => {
+        if (!activeFilters) {
+            setFilteredJobs(allJobs);
+            return;
+        }
+        let filtered = allJobs;
+        const {
+            Location = [],
+            JobTitle = [],
+            DatePosted = [],
+            JobType = [],
+            ExperienceLevel = [],
+            WorkArrangement = []
+        } = activeFilters;
+        if (
+            Location.length > 0 ||
+            JobTitle.length > 0 ||
+            DatePosted.length > 0 ||
+            JobType.length > 0 ||
+            ExperienceLevel.length > 0 ||
+            WorkArrangement.length > 0
+        ) {
+            filtered = allJobs.filter(job => {
+                let matches = true;
+                if (Location.length > 0) {
+                    matches = matches && Location.some(loc => job.location?.toLowerCase().includes(loc.toLowerCase()));
+                }
+                if (JobTitle.length > 0) {
+                    matches = matches && JobTitle.some(title => job.title?.toLowerCase().includes(title.toLowerCase()));
+                }
+                if (JobType.length > 0) {
+                    matches = matches && JobType.some(type => job.jobType?.toLowerCase().includes(type.toLowerCase()));
+                }
+                if (ExperienceLevel.length > 0) {
+                    matches = matches && ExperienceLevel.some(exp => job.experience?.toLowerCase().includes(exp.toLowerCase()));
+                }
+                if (WorkArrangement.length > 0) {
+                    matches = matches && WorkArrangement.some(arr => job.workArrangement?.toLowerCase().includes(arr.toLowerCase()));
+                }
+                // DatePosted filter (if implemented)
+                // ...implement date logic if needed...
+                return matches;
+            });
+        }
+        setFilteredJobs(filtered);
+    }, [allJobs, activeFilters]);
+    // ...existing code...
     return (
         <div className="min-h-screen w-full bg-gradient-to-br from-[#00040A] to-[#001636]">
             <Navbar />
@@ -70,6 +117,6 @@ const Jobs = () => {
             </div>
         </div>
     );
-};
+}
 
 export default Jobs;

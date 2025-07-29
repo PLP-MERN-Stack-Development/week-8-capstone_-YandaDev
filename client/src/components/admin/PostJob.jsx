@@ -16,86 +16,54 @@ import 'react-quill/dist/quill.snow.css';
 
 import useGetAllCompanies from '@/hooks/useGetAllCompanies';
 import Footer from '../shared/Footer';
-
-const PostJob = () => {
-    useGetAllCompanies();
+function PostJob() {
+    // --- State and hooks ---
     const [input, setInput] = useState({
         title: '',
         description: '',
         requirements: '',
-        payType: '', // New field
+        payType: '',
         minSalary: '',
         maxSalary: '',
         currency: 'USD',
         payPeriod: 'per month',
         gigDescription: '',
         commissionDetails: '',
-        salary: '', // legacy, for backend compatibility
         location: '',
-        jobType: '',
-        experience: '',
-        position: 0,
         workArrangement: '',
+        position: '',
         companyId: '',
+        experience: '',
     });
-    // Track the selected company label for Combobox
     const [selectedCompany, setSelectedCompany] = useState({ id: '', name: '' });
-    // Fetch recruiter's linked companies from profile (assume available in redux store or fetch on mount)
-    const { user } = useSelector((store) => store.auth); // adjust according to your state shape
-    const linkedCompanies = user?.profile?.companies || [];
-    // selectChangeHandler is defined below, remove this duplicate
-    const workArrangementOptions = ["On-site", "Hybrid", "Remote"];
-
-    const workArrangementChangeHandler = (value) => {
-        setInput({ ...input, workArrangement: value });
-    };
+    useGetAllCompanies();
+    const companies = useSelector(state => state.company.companies);
+    const companiesLoading = false; // Optionally, add loading state to Redux if needed
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
-    const { companies } = useSelector((store) => store.company);
-    const [companiesLoading, setCompaniesLoading] = useState(false);
-
-    // Ensure companies are loaded and show loading state
-    React.useEffect(() => {
-        if (companies.length === 0) {
-            setCompaniesLoading(true);
-            // Wait a short time to allow useGetAllCompanies to fetch
-            const timeout = setTimeout(() => setCompaniesLoading(false), 1500);
-            return () => clearTimeout(timeout);
-        }
-    }, [companies]);
-
-    const changeEventHandler = (e) => {
-        setInput({ ...input, [e.target.name]: e.target.value });
+    const workArrangementOptions = [
+        'Remote',
+        'On-site',
+        'Hybrid',
+        'Contract',
+        'Internship',
+        'Part-time',
+        'Full-time',
+    ];
+    const changeEventHandler = e => {
+        const { name, value } = e.target;
+        setInput(prev => ({ ...prev, [name]: value }));
     };
-
-    // Helper for pay type change
-    const handlePayTypeChange = (e) => {
-        setInput({
-            ...input,
-            payType: e.target.value,
-            // Reset salary-related fields on pay type change
-            minSalary: '',
-            maxSalary: '',
-            currency: 'USD',
-            payPeriod: 'per month',
-            gigDescription: '',
-            commissionDetails: '',
-        });
+    const handlePayTypeChange = e => {
+        const value = e.target.value;
+        setInput(prev => ({ ...prev, payType: value }));
     };
-
-    // Unified selectChangeHandler for company selection
-    // Unified selectChangeHandler for company selection
-    const selectChangeHandler = (value) => {
-        // Find the company in companies or fallback to previous selectedCompany
-        let label = '';
-        const found = companies.find(c => c._id === value);
-        if (found) label = found.name;
-        else if (selectedCompany.id === value) label = selectedCompany.name;
-        setInput({ ...input, companyId: value });
-        setSelectedCompany({ id: value, name: label });
+    const selectChangeHandler = value => {
+        setInput(prev => ({ ...prev, companyId: value }));
+        const company = companies.find(c => c._id === value);
+        setSelectedCompany({ id: value, name: company ? company.name : '' });
     };
-
+    // ...existing code...
     // Unified submitHandler for flexible salary model
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -343,7 +311,7 @@ const PostJob = () => {
                                 name="payType"
                                 value={input.payType}
                                 onChange={handlePayTypeChange}
-                                className="w-full border border-blue-300 rounded-md px-3 py-2 my-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full border border-blue-300 rounded-md px-3 py-2 my-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                             >
                                 <option value="">Select Pay Type</option>
                                 <option value="Fixed Range Salary">Fixed Range Salary</option>
@@ -388,7 +356,7 @@ const PostJob = () => {
                                         name="currency"
                                         value={input.currency}
                                         onChange={changeEventHandler}
-                                        className="w-full border border-blue-300 rounded-md px-3 py-2 my-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        className="w-full border border-blue-300 rounded-md px-3 py-2 my-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                                     >
                                         <option value="USD">USD</option>
                                         <option value="EUR">EUR</option>
@@ -406,7 +374,7 @@ const PostJob = () => {
                                         name="payPeriod"
                                         value={input.payPeriod}
                                         onChange={changeEventHandler}
-                                        className="w-full border border-blue-300 rounded-md px-3 py-2 my-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        className="w-full border border-blue-300 rounded-md px-3 py-2 my-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                                     >
                                         <option value="per month">per month</option>
                                         <option value="per year">per year</option>
@@ -416,34 +384,7 @@ const PostJob = () => {
                                     </select>
                                 </div>
                             </>
-                        )}
-                        {input.payType === 'Task/Gig-Based' && (
-                            <div className="col-span-2">
-                                <Label>Gig/Task Pay Description</Label>
-                                <Input
-                                    type="text"
-                                    name="gigDescription"
-                                    value={input.gigDescription}
-                                    onChange={changeEventHandler}
-                                    placeholder="e.g. Pay per completed task, rate varies"
-                                    className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
-                                />
-                                <div className="text-xs text-gray-500 mt-1">Describe how pay is determined for this gig or task-based job.</div>
-                            </div>
-                        )}
-                        {input.payType === 'Commission Only' && (
-                            <div className="col-span-2">
-                                <Label>Commission Details</Label>
-                                <Input
-                                    type="text"
-                                    name="commissionDetails"
-                                    value={input.commissionDetails}
-                                    onChange={changeEventHandler}
-                                    placeholder="e.g. 15% per sale"
-                                    className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
-                                />
-                                <div className="text-xs text-gray-500 mt-1">Describe the commission structure for this job.</div>
-                            </div>
+
                         )}
                         <div>
                             <Label>
@@ -459,34 +400,10 @@ const PostJob = () => {
                         </div>
                         <div>
                             <Label>
-                                Job Type <span className="text-red-500">*</span>
-                            </Label>
-                            <Input
-                                type="text"
-                                name="jobType"
-                                value={ input.jobType }
-                                onChange={ changeEventHandler }
-                                className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <Label>
-                                Experience Level <span className="text-red-500">*</span>
-                            </Label>
-                            <Input
-                                type="text"
-                                name="experience"
-                                value={ input.experience }
-                                onChange={ changeEventHandler }
-                                className="my-1 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <Label>
                                 Work Arrangement <span className="text-red-500">*</span>
                             </Label>
                             <select
-                                className="w-full border border-blue-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full border border-blue-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                                 value={input.workArrangement}
                                 onChange={e => workArrangementChangeHandler(e.target.value)}
                             >
@@ -509,16 +426,14 @@ const PostJob = () => {
                             />
                         </div>
                         {/* Company selection: all companies in the database, now with Combobox */}
-                        <div>
+                        <div className="w-full">
                             <Label>
                                 Company <span className="text-red-500">*</span>
                             </Label>
-                            {/* Ensure the selected company is always in the options */}
                             <Combobox
                                 options={(() => {
                                     const opts = companies.map(c => ({ value: c._id, label: c.name }));
                                     if (input.companyId && !opts.some(o => o.value === input.companyId)) {
-                                        // Always add the selected company if not present
                                         opts.push({ value: selectedCompany.id, label: selectedCompany.name || 'Selected Company' });
                                     }
                                     return opts;

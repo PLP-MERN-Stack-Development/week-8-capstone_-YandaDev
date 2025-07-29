@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 
 const Jobs = () => {
+    // Robust normalization: lowercase, replace hyphens with spaces, collapse spaces, trim
+    const normalize = str => (str || '').toLowerCase().replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
     const { allJobs, activeFilters } = useSelector(store => store.job);
     const [filteredJobs, setFilteredJobs] = useState([]);
     const [showFilters, setShowFilters] = useState(false); // State to control filter card visibility
@@ -55,19 +57,19 @@ const Jobs = () => {
             filtered = allJobs.filter(job => {
                 let matches = true;
                 if (Location.length > 0) {
-                    matches = matches && Location.some(loc => job.location?.toLowerCase().includes(loc.toLowerCase()));
+                    matches = matches && Location.some(loc => (job.location && normalize(job.location).includes(normalize(loc))));
                 }
                 if (JobTitle.length > 0) {
-                    matches = matches && JobTitle.some(title => job.title?.toLowerCase().includes(title.toLowerCase()));
+                    matches = matches && JobTitle.some(title => (job.title && normalize(job.title).includes(normalize(title))));
                 }
                 if (JobType.length > 0) {
-                    matches = matches && JobType.some(type => job.jobType?.toLowerCase().includes(type.toLowerCase()));
+                    matches = matches && JobType.some(type => (job.jobType && normalize(job.jobType).includes(normalize(type))));
                 }
                 if (ExperienceLevel.length > 0) {
-                    matches = matches && ExperienceLevel.some(exp => job.experience?.toLowerCase().includes(exp.toLowerCase()));
+                    matches = matches && ExperienceLevel.some(exp => (job.experience && normalize(job.experience).includes(normalize(exp))));
                 }
                 if (WorkArrangement.length > 0) {
-                    matches = matches && WorkArrangement.some(arr => job.workArrangement?.toLowerCase().includes(arr.toLowerCase()));
+                    matches = matches && WorkArrangement.some(arr => (job.workArrangement && normalize(job.workArrangement).includes(normalize(arr))));
                 }
                 // DatePosted filter (if implemented)
                 // ...implement date logic if needed...

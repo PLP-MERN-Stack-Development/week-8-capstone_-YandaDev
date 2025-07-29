@@ -141,13 +141,13 @@ const FilterCard = () => {
     );
 
     return (
-        <div className="w-full max-w-full mx-auto flex flex-row items-center py-6 px-4 rounded-2xl shadow-2xl bg-gradient-to-br from-[#001636] to-[#00040A] border border-blue-900 gap-4">
-            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiTextInput('Location', 'Location', locationInput, setLocationInput)}</div>
-            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiTextInput('Job Title', 'JobTitle', jobTitleInput, setJobTitleInput)}</div>
-            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiSelect('Date Posted', 'DatePosted', datePostedOptions)}</div>
-            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiSelect('Job Type', 'JobType', jobTypeOptions)}</div>
-            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiSelect('Experience Level', 'ExperienceLevel', experienceLevelOptions)}</div>
-            <div className="flex flex-col min-w-[180px] w-[180px]">{renderMultiSelect('Work Arrangement', 'WorkArrangement', workArrangementOptions)}</div>
+        <div className="w-full max-w-full mx-auto flex flex-wrap md:flex-row flex-col items-center py-6 px-2 md:px-4 rounded-2xl shadow-2xl bg-gradient-to-br from-[#001636] to-[#00040A] border border-blue-900 gap-4">
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiTextInput('Location', 'Location', locationInput, setLocationInput)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiTextInput('Job Title', 'JobTitle', jobTitleInput, setJobTitleInput)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiSelect('Date Posted', 'DatePosted', datePostedOptions)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiSelect('Job Type', 'JobType', jobTypeOptions)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiSelect('Experience Level', 'ExperienceLevel', experienceLevelOptions)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiSelect('Work Arrangement', 'WorkArrangement', workArrangementOptions)}</div>
             <div className="flex flex-col min-w-[70px] w-[70px] justify-center items-center mt-4">
                 <Button
                     variant="outline"

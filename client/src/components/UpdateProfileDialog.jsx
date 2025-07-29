@@ -21,7 +21,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         phoneNumber: user?.phoneNumber || "",
         bio: user?.profile?.bio || "",
         skills: user?.profile?.skills?.join(", ") || "", // Combine skills into a comma-separated string
-        file: user?.profile?.resume || "",
+        file: null,
     });
 
     const [fileError, setFileError] = useState("");
@@ -49,8 +49,8 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("bio", input.bio);
         formData.append("skills", input.skills.split(",").map((skill) => skill.trim())); // Convert back to an array
-        if (input.file) {
-            formData.append("file", input.file);
+        if (input.file && typeof input.file !== 'string') {
+            formData.append("resume", input.file);
         }
         try {
             setLoading(true);

@@ -238,9 +238,9 @@ export const updateProfile = async(req, res) => {
         if (skills) user.profile.skills = skillsArray
         if (companyId) user.profile.company = companyId
 
-        // resume comes later here...
-        if (cloudResponse) {
-            user.profile.resume = cloudResponse.secure_url;
+        // Save resume file info if uploaded
+        if (resumeFileUrl && file) {
+            user.profile.resume = resumeFileUrl;
             user.profile.resumeOriginalName = file.originalname; // Save the original file name
         }
 

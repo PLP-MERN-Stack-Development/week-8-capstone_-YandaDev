@@ -180,7 +180,19 @@ const Navbar = () => {
                                 <li className="cursor-pointer hover:text-white">
                                     <Link to="/browse">Browse</Link>
                                 </li>
+                                {user && user.role === 'jobseeker' && (
+                                    <li className="cursor-pointer hover:text-white">
+                                        <Link to="/profile">Profile</Link>
+                                    </li>
+                                )}
                             </>
+                        )}
+                        {user && (
+                            <li>
+                                <Button onClick={logoutHandler} variant="ghost" className="w-full text-red-400 flex items-center gap-2 justify-center">
+                                    <LogOut className="w-4 h-4" /> Logout
+                                </Button>
+                            </li>
                         )}
                         { !user && (
                             <div className="flex flex-col gap-2">

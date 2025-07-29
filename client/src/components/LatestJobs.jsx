@@ -4,10 +4,32 @@ import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 
 const LatestJobs = () => {
-    const { allJobs } = useSelector((store) => store.job);
+    const { allJobs, searchJobByText } = useSelector((store) => store.job);
 
     // Ensure allJobs is an array
     const jobsList = Array.isArray(allJobs) ? allJobs : [];
+
+    // Fuzzy matching utility (copied from Browse.jsx)
+    function levenshtein(a, b) {
+        if (!a || !b) return Math.max(a?.length || 0, b?.length || 0);
+        const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(null));
+        for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+        for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j - 1] + cost
+                );
+            }
+        }
+        return matrix[a.length][b.length];
+    }
+
+    // Always show the latest 6 jobs, unfiltered by search
+    const filteredJobs = jobsList;
 
     // Animation Variants
     const containerVariants = {
@@ -43,7 +65,7 @@ const LatestJobs = () => {
                 initial="hidden"
                 animate="visible"
             >
-                {jobsList.length === 0 ? (
+                {filteredJobs.length === 0 ? (
                     <motion.span
                         className="text-center text-lg text-gray-500"
                         initial={{ opacity: 0 }}
@@ -53,7 +75,7 @@ const LatestJobs = () => {
                         No Jobs Available
                     </motion.span>
                 ) : (
-                    jobsList.slice(0, 6).map((job) => (
+                    filteredJobs.slice(0, 6).map((job) => (
                         <motion.div
                             key={job._id}
                             variants={cardVariants}

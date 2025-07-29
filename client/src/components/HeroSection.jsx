@@ -82,7 +82,7 @@ const HeroSection = () => {
                 <Input
                     type="text"
                     value={query}
-                    placeholder="Search by role, tech stack or tools"
+                    placeholder="Search by title, skill or company"
                     onChange={(e) => setQuery(e.target.value)}
                     className="w-full p-3 outline-none border-none bg-transparent text-white placeholder-gray-400 rounded-full text-base sm:text-lg focus:ring-2 focus:ring-blue-500"
                 />

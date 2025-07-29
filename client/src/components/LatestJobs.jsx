@@ -36,35 +36,45 @@ const LatestJobs = () => {
                 <span>Latest & Top</span> Job Openings
             </motion.h1>
 
-            {/* Job Cards Grid */ }
+            {/* Job Cards Grid */}
             <motion.div
                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-                variants={ containerVariants }
+                variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
-                { jobsList.length === 0 ? (
+                {jobsList.length === 0 ? (
                     <motion.span
                         className="text-center text-lg text-gray-500"
-                        initial={ { opacity: 0 } }
-                        animate={ { opacity: 1 } }
-                        transition={ { duration: 0.3 } }
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
                     >
                         No Jobs Available
                     </motion.span>
                 ) : (
                     jobsList.slice(0, 6).map((job) => (
                         <motion.div
-                            key={ job._id }
-                            variants={ cardVariants }
-                            whileHover={ { scale: 1.05 } }
-                            whileTap={ { scale: 0.95 } }
+                            key={job._id}
+                            variants={cardVariants}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                         >
-                            <LatestJobCards job={ job } />
+                            <LatestJobCards job={job} />
                         </motion.div>
                     ))
-                ) }
+                )}
             </motion.div>
+
+            {/* View More Jobs Button */}
+            <div className="flex justify-center mt-12">
+                <a
+                    href="/jobs"
+                    className="bg-gradient-to-r from-blue-400 to-purple-500 text-white font-semibold rounded-full px-8 py-4 text-base sm:text-lg shadow-lg hover:from-blue-500 hover:to-purple-600 transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    View More Jobs
+                </a>
+            </div>
         </div>
     );
 };

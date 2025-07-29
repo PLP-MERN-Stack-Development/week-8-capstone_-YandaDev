@@ -31,6 +31,7 @@ function PostJob() {
         commissionDetails: '',
         location: '',
         workArrangement: '',
+        jobType: '',
         position: '',
         companyId: '',
         experience: '',
@@ -42,14 +43,43 @@ function PostJob() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const workArrangementOptions = [
-        'Remote',
         'On-site',
         'Hybrid',
-        'Contract',
-        'Internship',
-        'Part-time',
-        'Full-time',
+        'Remote',
     ];
+
+    const jobTypeOptions = [
+        'Full-Time',
+        'Part-Time',
+        'Contract',
+    ];
+    // Handler for work arrangement
+    const workArrangementChangeHandler = value => {
+        setInput(prev => ({ ...prev, workArrangement: value }));
+    };
+
+    const experienceLevelOptions = [
+        'Internship',
+        'Entry-Level',
+        'Mid-Level',
+        'Senior-Level',
+    ];
+                        {/* Job Type Field */}
+                        <div>
+                            <Label>
+                                Job Type <span className="text-red-500">*</span>
+                            </Label>
+                            <select
+                                className="w-full border border-blue-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                                value={input.jobType}
+                                onChange={e => setInput(prev => ({ ...prev, jobType: e.target.value }))}
+                            >
+                                <option value="" disabled>Select Job Type</option>
+                                {jobTypeOptions.map(option => (
+                                    <option key={option} value={option}>{option}</option>
+                                ))}
+                            </select>
+                        </div>
     const changeEventHandler = e => {
         const { name, value } = e.target;
         setInput(prev => ({ ...prev, [name]: value }));
@@ -302,6 +332,38 @@ function PostJob() {
                                 placeholder="Enter job requirements..."
                             />
                         </div>
+        {/* Job Type Field */}
+        <div>
+            <Label>
+                Job Type <span className="text-red-500">*</span>
+            </Label>
+            <select
+                className="w-full border border-blue-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                value={input.jobType}
+                onChange={e => setInput(prev => ({ ...prev, jobType: e.target.value }))}
+            >
+                <option value="" disabled>Select Job Type</option>
+                {jobTypeOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                ))}
+            </select>
+        </div>
+        {/* Experience Level Field */}
+        <div>
+            <Label>
+                Experience Level <span className="text-red-500">*</span>
+            </Label>
+            <select
+                className="w-full border border-blue-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                value={input.experience}
+                onChange={e => setInput(prev => ({ ...prev, experience: e.target.value }))}
+            >
+                <option value="" disabled>Select Experience Level</option>
+                {experienceLevelOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                ))}
+            </select>
+        </div>
                         {/* Pay Type Selection */}
                         <div>
                             <Label>

@@ -11,11 +11,7 @@ const Browse = () => {
     const { allJobs, searchJobByText } = useSelector(store => store.job);  // Assuming allJobs is an array
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        return () => {
-            dispatch(setSearchedQuery(''));
-        };
-    }, [dispatch]);
+    // Removed useEffect cleanup that reset the search query on unmount
 
     // Fuzzy matching utility
     function levenshtein(a, b) {

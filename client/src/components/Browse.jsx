@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+// ...existing code...
 import Navbar from './shared/Navbar';
 import Job from './Job';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,9 +8,20 @@ import useGetAllJobs from '@/hooks/useGetAllJobs';
 import Footer from './shared/Footer';
 
 const Browse = () => {
+    // Simple normalization: lowercase and trim (original behavior)
+    const normalize = str => (str || '').toLowerCase().trim();
     const jobsLoading = useGetAllJobs();
     const { allJobs, searchJobByText } = useSelector(store => store.job);  // Assuming allJobs is an array
     const dispatch = useDispatch();
+    // Always define searchText for conditional rendering
+    const searchText = (searchJobByText || '').toLowerCase().trim();
+    // Diagnostic: Log all unique jobType values
+    useEffect(() => {
+        if (Array.isArray(allJobs)) {
+            const uniqueTypes = Array.from(new Set(allJobs.map(j => j.jobType)));
+            console.log('Unique jobType values:', uniqueTypes);
+        }
+    }, [allJobs]);
 
     // Removed useEffect cleanup that reset the search query on unmount
 
@@ -32,27 +44,52 @@ const Browse = () => {
         return matrix[a.length][b.length];
     }
 
-    // Filter jobs by searchJobByText
-    const searchText = (searchJobByText || '').toLowerCase().trim();
+    // Filter jobs by searchJobByText and selected filters (including Work Arrangement)
     let filteredJobs = allJobs;
-    if (searchText.length > 0 && allJobs.length > 0) {
-        const searchWords = searchText.split(' ').filter(Boolean);
+    let filters = searchJobByText;
+    if (filters && typeof filters === 'object') {
+        // Multi-filter mode (from FilterCard)
         filteredJobs = allJobs.filter(job => {
-            const fields = [
-                job.title?.toLowerCase(),
-                job.description?.toLowerCase(),
-                job.location?.toLowerCase(),
-                job.company?.name?.toLowerCase(),
-                Array.isArray(job.techStack) ? job.techStack.join(' ').toLowerCase() : job.techStack?.toLowerCase()
-            ];
-            return searchWords.some(word =>
-                fields.some(field => {
-                    if (!field) return false;
-                    if (field.includes(word)) return true;
-                    return field.split(/\W+/).some(fw => levenshtein(fw, word) <= 2);
-                })
-            );
+            // Work Arrangement filter
+            if (filters.WorkArrangement && filters.WorkArrangement.length > 0) {
+                if (!filters.WorkArrangement.includes(job.workArrangement)) return false;
+            }
+            // Job Type filter
+            if (filters.JobType && filters.JobType.length > 0) {
+                const jobTypeValue = (job.jobType || '').toLowerCase();
+                const filterTypes = filters.JobType.map(jt => jt.toLowerCase());
+                if (!filterTypes.includes(jobTypeValue)) return false;
+            }
+            // Job Title filter (exact or partial match)
+            if (filters.JobTitle && filters.JobTitle.length > 0) {
+                const jobTitleValue = (job.title || '').toLowerCase();
+                const matches = filters.JobTitle.some(title => jobTitleValue.includes((title || '').toLowerCase()));
+                if (!matches) return false;
+            }
+            // Add other filters as needed (Location, etc.)
+            return true;
         });
+    } else {
+        // Text search mode (from search bar)
+        if (searchText.length > 0 && allJobs.length > 0) {
+            const searchWords = searchText.split(' ').filter(Boolean);
+            filteredJobs = allJobs.filter(job => {
+                const fields = [
+                    job.title?.toLowerCase(),
+                    job.description?.toLowerCase(),
+                    job.location?.toLowerCase(),
+                    job.company?.name?.toLowerCase(),
+                    Array.isArray(job.techStack) ? job.techStack.join(' ').toLowerCase() : job.techStack?.toLowerCase()
+                ];
+                return searchWords.some(word =>
+                    fields.some(field => {
+                        if (!field) return false;
+                        if (field.includes(word)) return true;
+                        return field.split(/\W+/).some(fw => levenshtein(fw, word) <= 2);
+                    })
+                );
+            });
+        }
     }
 
     return (

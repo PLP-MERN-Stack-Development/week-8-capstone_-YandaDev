@@ -78,6 +78,8 @@ const FilterCard = () => {
     const [locationInput, setLocationInput] = useState("");
     const [jobTitleInput, setJobTitleInput] = useState("");
 
+
+    // Handle Enter key for text input (restoring original logic)
     const handleTextInputKeyDown = (e, filterType, inputValue) => {
         if (e.key === "Enter" && inputValue.trim()) {
             setSelectedFilters(prev => ({
@@ -110,9 +112,11 @@ const FilterCard = () => {
                     }
                     onChange={e => setInputValue(e.target.value)}
                     onKeyDown={e => handleTextInputKeyDown(e, filterType, inputValue)}
+                    inputMode="search"
+                    enterKeyHint="search"
                     placeholder={
                         inputValue === "" && selectedFilters[filterType].length === 0
-                            ? `Enter ${label.toLowerCase()} and press enter`
+                            ? `Enter ${label.toLowerCase()} and press search`
                             : ""
                     }
                     className="w-full px-3 py-2 rounded border border-blue-800 bg-[#001636] text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm h-10 -mt-6 pr-2 placeholder:text-blue-300"
@@ -141,13 +145,13 @@ const FilterCard = () => {
     );
 
     return (
-        <div className="w-full max-w-full mx-auto flex flex-wrap md:flex-row flex-col items-center py-6 px-2 md:px-4 rounded-2xl shadow-2xl bg-gradient-to-br from-[#001636] to-[#00040A] border border-blue-900 gap-4">
-            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiTextInput('Location', 'Location', locationInput, setLocationInput)}</div>
-            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiTextInput('Job Title', 'JobTitle', jobTitleInput, setJobTitleInput)}</div>
-            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiSelect('Date Posted', 'DatePosted', datePostedOptions)}</div>
-            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiSelect('Job Type', 'JobType', jobTypeOptions)}</div>
-            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiSelect('Experience Level', 'ExperienceLevel', experienceLevelOptions)}</div>
-            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px]">{renderMultiSelect('Work Arrangement', 'WorkArrangement', workArrangementOptions)}</div>
+        <div className="w-full max-w-full mx-auto flex flex-wrap md:flex-row flex-col items-center justify-center py-6 px-2 md:px-4 rounded-2xl shadow-2xl bg-gradient-to-br from-[#001636] to-[#00040A] border border-blue-900 gap-4">
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px] justify-center items-center">{renderMultiTextInput('Location', 'Location', locationInput, setLocationInput)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px] justify-center items-center">{renderMultiTextInput('Job Title', 'JobTitle', jobTitleInput, setJobTitleInput)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px] justify-center items-center">{renderMultiSelect('Date Posted', 'DatePosted', datePostedOptions)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px] justify-center items-center">{renderMultiSelect('Job Type', 'JobType', jobTypeOptions)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px] justify-center items-center">{renderMultiSelect('Experience Level', 'ExperienceLevel', experienceLevelOptions)}</div>
+            <div className="flex flex-col min-w-[160px] w-full sm:w-[180px] justify-center items-center">{renderMultiSelect('Work Arrangement', 'WorkArrangement', workArrangementOptions)}</div>
             <div className="flex flex-col min-w-[70px] w-[70px] justify-center items-center mt-4">
                 <Button
                     variant="outline"

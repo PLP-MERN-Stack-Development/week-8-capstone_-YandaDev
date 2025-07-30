@@ -199,6 +199,9 @@ importers:
       express:
         specifier: ^4.21.2
         version: 4.21.2
+      form-data:
+        specifier: ^4.0.4
+        version: 4.0.4
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -209,8 +212,8 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2
       node-appwrite:
-        specifier: ^17.1.0
-        version: 17.1.0
+        specifier: ^17.2.0
+        version: 17.2.0
       nodemon:
         specifier: ^3.1.10
         version: 3.1.10
@@ -3497,8 +3500,8 @@ packages:
       react: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
       react-dom: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
 
-  node-appwrite@17.1.0:
-    resolution: {integrity: sha512-cZEpAbDdJcY3zcHOHfOdbH0Sj7prnGcpAvAb/6/MSQMdgmhReFLDR7yfJ67StyfDY7QOvA+H82tqN1NKg1wj5w==}
+  node-appwrite@17.2.0:
+    resolution: {integrity: sha512-naYUsVZEdF6YKF/q/s0DBQkAHJj2RhEWwmcXrkbfAAPc3Bn+D3CCftBqyNWeo17JBCoYWqQEgT2Od9xOVQR26A==}
 
   node-fetch-native-with-agent@1.7.2:
     resolution: {integrity: sha512-5MaOOCuJEvcckoz7/tjdx1M6OusOY6Xc5f459IaruGStWnKzlI1qpNgaAwmn4LmFYcsSlj+jBMk84wmmRxfk5g==}
@@ -8317,7 +8320,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  node-appwrite@17.1.0:
+  node-appwrite@17.2.0:
     dependencies:
       node-fetch-native-with-agent: 1.7.2
 

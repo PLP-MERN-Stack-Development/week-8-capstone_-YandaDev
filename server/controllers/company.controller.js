@@ -72,24 +72,29 @@ export const registerCompany = async(req, res) => {
         let logoUrl = '';
         if (req.file) {
             try {
-                const client = new Client()
-                    .setEndpoint(process.env.APPWRITE_ENDPOINT)
-                    .setProject(process.env.APPWRITE_PROJECT_ID)
-                    .setKey(process.env.APPWRITE_API_KEY);
-                const storage = new Storage(client);
-                const appwriteFile = await storage.createFile(
-                    process.env.APPWRITE_BUCKET_ID,
-                    'unique()',
-                    req.file.buffer,
-                    [
-                        Permission.read(Role.user('any')),
-                        Permission.update(Role.user('any')),
-                        Permission.delete(Role.user('any'))
-                    ]
+                const axios = (await import('axios')).default;
+                const FormData = (await import('form-data')).default;
+                const form = new FormData();
+                form.append('fileId', 'unique()');
+                form.append('file', req.file.buffer, req.file.originalname);
+                form.append('permissions[]', 'read("user:all")');
+                form.append('permissions[]', 'update("user:all")');
+                form.append('permissions[]', 'delete("user:all")');
+                const response = await axios.post(
+                    `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files`,
+                    form,
+                    {
+                        headers: {
+                            'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
+                            'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
+                            ...form.getHeaders()
+                        }
+                    }
                 );
+                const appwriteFile = response.data;
                 logoUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${appwriteFile.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
             } catch (error) {
-                console.error('Appwrite logo upload error:', error);
+                console.error('Appwrite logo upload error:', error?.response?.data || error);
             }
         }
 
@@ -181,25 +186,30 @@ export const updateCompany = async(req, res) => {
         let logoUrl = null;
         if (req.file) {
             try {
-                const client = new Client()
-                    .setEndpoint(process.env.APPWRITE_ENDPOINT)
-                    .setProject(process.env.APPWRITE_PROJECT_ID)
-                    .setKey(process.env.APPWRITE_API_KEY);
-                const storage = new Storage(client);
-                const appwriteFile = await storage.createFile(
-                    process.env.APPWRITE_BUCKET_ID,
-                    'unique()',
-                    req.file.buffer,
-                    [
-                        Permission.read(Role.user('any')),
-                        Permission.update(Role.user('any')),
-                        Permission.delete(Role.user('any'))
-                    ]
+                const axios = (await import('axios')).default;
+                const FormData = (await import('form-data')).default;
+                const form = new FormData();
+                form.append('fileId', 'unique()');
+                form.append('file', req.file.buffer, req.file.originalname);
+                form.append('permissions[]', 'read("user:all")');
+                form.append('permissions[]', 'update("user:all")');
+                form.append('permissions[]', 'delete("user:all")');
+                const response = await axios.post(
+                    `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files`,
+                    form,
+                    {
+                        headers: {
+                            'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
+                            'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
+                            ...form.getHeaders()
+                        }
+                    }
                 );
+                const appwriteFile = response.data;
                 logoUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${appwriteFile.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
                 updateData.logo = logoUrl;
             } catch (error) {
-                console.error('Appwrite logo upload error:', error);
+                console.error('Appwrite logo upload error:', error?.response?.data || error);
             }
         }
 

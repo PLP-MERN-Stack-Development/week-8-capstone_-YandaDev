@@ -78,18 +78,18 @@ const Profile = () => {
                         <div className="my-5 flex flex-col gap-2">
                             <Label className="text-md font-bold text-white">Resume</Label>
                             <div className="flex items-center gap-4">
-                                { isResume ? (
+                                {user?.profile?.resume ? (
                                     <a
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        href={ user?.profile?.resume }
+                                        href={user.profile.resume}
                                         className="text-blue-500 hover:underline"
                                     >
-                                        { user?.profile?.resumeOriginalName }
+                                        Resume
                                     </a>
                                 ) : (
                                     <span>NA</span>
-                                ) }
+                                )}
                             </div>
                         </div>
                     </div>

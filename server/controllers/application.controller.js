@@ -29,10 +29,20 @@ export const applyJob = async (req, res) => {
                 success: false
             })
         }
-        // create a new application
+
+        // get user's resume from profile
+        const { User } = await import('../models/user.model.js');
+        const user = await User.findById(userId);
+        let resumeUrl = null;
+        if (user && user.profile && user.profile.resume) {
+            resumeUrl = user.profile.resume;
+        }
+
+        // create a new application with resume
         const newApplication = await Application.create({
-            job:jobId,
-            applicant:userId,
+            job: jobId,
+            applicant: userId,
+            resume: resumeUrl
         });
 
         job.applications.push(newApplication._id);

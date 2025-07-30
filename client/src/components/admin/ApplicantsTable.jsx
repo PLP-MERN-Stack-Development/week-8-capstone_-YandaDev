@@ -40,9 +40,9 @@ const ApplicantsTable = () => {
 
     return (
         <motion.div
-            initial={ { opacity: 0 } }
-            animate={ { opacity: 1 } }
-            transition={ { duration: 0.6 } }
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
         >
             <Table className="bg-white shadow-md rounded-lg">
                 <TableCaption className="text-blue-600">A list of your recent applied users</TableCaption>
@@ -57,58 +57,69 @@ const ApplicantsTable = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    { applicants?.applications?.map((item, index) => (
-                        <motion.tr
-                            key={ item._id }
-                            variants={ tableRowVariants }
-                            initial="hidden"
-                            animate="visible"
-                            transition={ { delay: index * 0.1 } }
-                            className="hover:bg-blue-50"
-                        >
-                            <TableCell>{ item?.applicant?.fullname }</TableCell>
-                            <TableCell>{ item?.applicant?.email }</TableCell>
-                            <TableCell>{ item?.applicant?.phoneNumber }</TableCell>
-                            <TableCell>
-                                { item.applicant?.profile?.resume ? (
-                                    <a
-                                        className="text-blue-600 cursor-pointer"
-                                        href={ item?.applicant?.profile?.resume }
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        { item?.applicant?.profile?.resumeOriginalName }
-                                    </a>
-                                ) : (
-                                    <span>NA</span>
-                                ) }
-                            </TableCell>
-                            <TableCell>{ item?.applicant.createdAt.split('T')[0] }</TableCell>
-                            <TableCell className="float-right cursor-pointer">
-                                <Popover>
-                                    <PopoverTrigger>
-                                        <MoreHorizontal />
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-32">
-                                        { shortlistingStatus.map((status, index) => (
-                                            <motion.div
-                                                key={ index }
-                                                onClick={ () => statusHandler(status, item?._id) }
-                                                whileHover={ { scale: 1.05 } }
-                                                className={ `${status === "Accepted" ? "text-green-700" : "text-red-700"} flex w-fit items-center my-2 cursor-pointer text-blue-500` }
-                                            >
-                                                <span>{ status }</span>
-                                            </motion.div>
-                                        )) }
-                                    </PopoverContent>
-                                </Popover>
-                            </TableCell>
-                        </motion.tr>
-                    )) }
+                    {applicants?.applications?.map((item, index) =>
+                        item?.applicant ? (
+                            <motion.tr
+                                key={item._id}
+                                variants={tableRowVariants}
+                                initial="hidden"
+                                animate="visible"
+                                transition={{ delay: index * 0.1 }}
+                                className="hover:bg-blue-50"
+                            >
+                                <TableCell>{item?.applicant?.fullname}</TableCell>
+                                <TableCell>{item?.applicant?.email}</TableCell>
+                                <TableCell>{item?.applicant?.phoneNumber}</TableCell>
+                                <TableCell>
+                                    {item.resume ? (
+                                        <a
+                                            className="text-blue-600 cursor-pointer"
+                                            href={item.resume}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Resume
+                                        </a>
+                                    ) : item.applicant?.profile?.resume ? (
+                                        <a
+                                            className="text-blue-600 cursor-pointer"
+                                            href={item?.applicant?.profile?.resume}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {item?.applicant?.profile?.resumeOriginalName || 'Resume'}
+                                        </a>
+                                    ) : (
+                                        <span>NA</span>
+                                    )}
+                                </TableCell>
+                                <TableCell>{item?.applicant?.createdAt ? item.applicant.createdAt.split('T')[0] : 'NA'}</TableCell>
+                                <TableCell className="float-right cursor-pointer">
+                                    <Popover>
+                                        <PopoverTrigger>
+                                            <MoreHorizontal />
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-32">
+                                            {shortlistingStatus.map((status, idx) => (
+                                                <motion.div
+                                                    key={idx}
+                                                    onClick={() => statusHandler(status, item?._id)}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    className={`${status === "Accepted" ? "text-green-700" : "text-red-700"} flex w-fit items-center my-2 cursor-pointer text-blue-500`}
+                                                >
+                                                    <span>{status}</span>
+                                                </motion.div>
+                                            ))}
+                                        </PopoverContent>
+                                    </Popover>
+                                </TableCell>
+                            </motion.tr>
+                        ) : null
+                    )}
                 </TableBody>
             </Table>
         </motion.div>
     );
-};
+}
 
 export default ApplicantsTable;

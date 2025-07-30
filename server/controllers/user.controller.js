@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
-import { Client, Storage, Permission, Role } from "node-appwrite";
+
 
 export const register = async(req, res) => {
     try {
@@ -22,6 +22,9 @@ export const register = async(req, res) => {
         let profilePhotoUrl = null;
         const file = req.file;
         console.log('DEBUG: req.file in register:', file);
+        if (file) {
+            console.log('DEBUG: file.buffer length:', file?.buffer?.length, 'originalname:', file?.originalname);
+        }
         if (file) {
             try {
                 // Direct REST API upload using axios and form-data
@@ -221,6 +224,12 @@ export const updateProfile = async(req, res) => {
                 );
                 const appwriteFile = response.data;
                 resumeFileUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${appwriteFile.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
+
+                // Save resumeFileUrl to user's profile
+                await User.updateOne(
+                    { email },
+                    { $set: { 'profile.resume': resumeFileUrl } }
+                );
             } catch (error) {
                 console.error('Appwrite resume upload error:', error?.response?.data || error);
                 return res.status(500).json({

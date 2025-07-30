@@ -90,13 +90,6 @@ const Profile = () => {
                                 ) : (
                                     <span>NA</span>
                                 ) }
-                                <Button
-                                    variant="outline"
-                                    className="text-blue-600 border-blue-600 hover:bg-blue-600 hover:text-white"
-                                    onClick={ () => setOpen(true) }
-                                >
-                                    Update Resume
-                                </Button>
                             </div>
                         </div>
                     </div>

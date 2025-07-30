@@ -21,29 +21,35 @@ export const register = async(req, res) => {
 
         let profilePhotoUrl = null;
         const file = req.file;
+        console.log('DEBUG: req.file in register:', file);
         if (file) {
             try {
-                // Appwrite client setup
-                const client = new Client()
-                    .setEndpoint(process.env.APPWRITE_ENDPOINT)
-                    .setProject(process.env.APPWRITE_PROJECT_ID)
-                    .setKey(process.env.APPWRITE_API_KEY);
-                const storage = new Storage(client);
-                // Upload file to Appwrite
-                const appwriteFile = await storage.createFile(
-                    process.env.APPWRITE_BUCKET_ID,
-                    'unique()' /* let Appwrite generate ID */,
-                    file.buffer,
-                    [
-                        Permission.read(Role.user('any')), // Adjust permissions as needed
-                        Permission.update(Role.user('any')),
-                        Permission.delete(Role.user('any'))
-                    ]
+                // Direct REST API upload using axios and form-data
+                const axios = (await import('axios')).default;
+                const FormData = (await import('form-data')).default;
+                const form = new FormData();
+                form.append('fileId', 'unique()');
+                form.append('file', file.buffer, file.originalname);
+                // Permissions: allow any user to read/update/delete
+                form.append('permissions[]', 'read("user:all")');
+                form.append('permissions[]', 'update("user:all")');
+                form.append('permissions[]', 'delete("user:all")');
+
+                const response = await axios.post(
+                    `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files`,
+                    form,
+                    {
+                        headers: {
+                            'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
+                            'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
+                            ...form.getHeaders()
+                        }
+                    }
                 );
-                // Get file preview URL
+                const appwriteFile = response.data;
                 profilePhotoUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${appwriteFile.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
             } catch (error) {
-                console.error('Appwrite upload error:', error);
+                console.error('Appwrite upload error:', error?.response?.data || error);
                 profilePhotoUrl = null;
             }
         }
@@ -187,73 +193,91 @@ export const logout = async(req, res) => {
 export const updateProfile = async(req, res) => {
     try {
         const { fullname, email, phoneNumber, bio, skills, companyId } = req.body;
-
         const file = req.file;
-        // Appwrite upload for resume (PDF, DOC, etc.)
         let resumeFileUrl = null;
         if (file) {
             try {
-                const client = new Client()
-                    .setEndpoint(process.env.APPWRITE_ENDPOINT)
-                    .setProject(process.env.APPWRITE_PROJECT_ID)
-                    .setKey(process.env.APPWRITE_API_KEY);
-                const storage = new Storage(client);
-                const appwriteFile = await storage.createFile(
-                    process.env.APPWRITE_BUCKET_ID,
-                    'unique()',
-                    file.buffer,
-                    [
-                        Permission.read(Role.user('any')),
-                        Permission.update(Role.user('any')),
-                        Permission.delete(Role.user('any'))
-                    ]
+                // Direct REST API upload using axios and form-data
+                const axios = (await import('axios')).default;
+                const FormData = (await import('form-data')).default;
+                const form = new FormData();
+                form.append('fileId', 'unique()');
+                form.append('file', file.buffer, file.originalname);
+                // Permissions: allow any user to read/update/delete
+                form.append('permissions[]', 'read("user:all")');
+                form.append('permissions[]', 'update("user:all")');
+                form.append('permissions[]', 'delete("user:all")');
+
+                const response = await axios.post(
+                    `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files`,
+                    form,
+                    {
+                        headers: {
+                            'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
+                            'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
+                            ...form.getHeaders()
+                        }
+                    }
                 );
+                const appwriteFile = response.data;
                 resumeFileUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${appwriteFile.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
             } catch (error) {
-                console.error('Appwrite resume upload error:', error);
-                resumeFileUrl = null;
+                console.error('Appwrite resume upload error:', error?.response?.data || error);
+                return res.status(500).json({
+                    message: 'Error uploading resume to Appwrite.',
+                    success: false
+                });
             }
         }
-        // Save resumeFileUrl to user.profile.resume if needed
 
 
         let skillsArray;
         if (skills) {
             skillsArray = skills.split(",");
         }
-        const userId = req.id;
-        let user = await User.findById(userId);
+        // ...existing code...
+        // Appwrite upload for resume (PDF, DOC, etc.)
+        if (file) {
+            try {
+                // Direct REST API upload using axios and form-data
+                const axios = (await import('axios')).default;
+                const FormData = (await import('form-data')).default;
+                const form = new FormData();
+                form.append('fileId', 'unique()');
+                form.append('file', file.buffer, file.originalname);
+                // Permissions: allow any user to read/update/delete
+                form.append('permissions[]', 'read("user:all")');
+                form.append('permissions[]', 'update("user:all")');
+                form.append('permissions[]', 'delete("user:all")');
 
-        if (!user) {
-            return res.status(400).json({
-                message: "User not found.",
-                success: false
-            })
+                const response = await axios.post(
+                    `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files`,
+                    form,
+                    {
+                        headers: {
+                            'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
+                            'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
+                            ...form.getHeaders()
+                        }
+                    }
+                );
+                const appwriteFile = response.data;
+                resumeFileUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${appwriteFile.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
+            } catch (error) {
+                console.error('Appwrite resume upload error:', error?.response?.data || error);
+                return res.status(500).json({
+                    message: 'Error uploading resume to Appwrite.',
+                    success: false
+                });
+            }
         }
-        // updating data
-        if (fullname) user.fullname = fullname
-        if (email) user.email = email
-        if (phoneNumber) user.phoneNumber = phoneNumber
-        if (bio) user.profile.bio = bio
-        if (skills) user.profile.skills = skillsArray
-        if (companyId) user.profile.company = companyId
-
-        // resume comes later here...
-        if (cloudResponse) {
-            user.profile.resume = cloudResponse.secure_url;
-            user.profile.resumeOriginalName = file.originalname; // Save the original file name
-        }
-
-
-        await user.save();
-
-        // Populate companies for response
-        const populatedUser = await User.findById(user._id).populate('profile.companies');
+        // Populate the updated user before returning response
+        const updatedUser = await User.findOne({ email }).populate('profile.companies');
         return res.status(200).json({
             message: "Profile updated successfully.",
-            user: populatedUser,
+            user: updatedUser,
             success: true
-        })
+        });
     } catch (error) {
         console.log(error);
     }
@@ -266,18 +290,17 @@ export const savedJobs = async(req, res) => {
 
         let user = await User.findById(userId)
         if (!user) {
-            return res.status(404).json({
-                message: "User not found",
-                success: false
-            })
-        }
-
-        if (user.profile.savedJobs.includes(jobId)) {
-            return res.status(400).json({
-                message: "Job is already saved",
-                success: false
-            })
-        }
+        return res.status(404).json({
+            message: "User not found",
+            success: false
+        });
+    }
+    if (user.profile.savedJobs.includes(jobId)) {
+        return res.status(400).json({
+            message: "Job is already saved",
+            success: false
+        });
+    }
 
         user.profile.savedJobs.push(jobId);
         await user.save()

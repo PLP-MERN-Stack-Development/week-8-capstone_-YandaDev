@@ -56,9 +56,20 @@ export const chatbot = async(req, res) => {
             message: formattedBotResponse,
         });
     } catch (error) {
-        console.error('Error with Mistral API:', error);
+        // Enhanced error logging for debugging
+        console.error('Error with Mistral API:', {
+            message: error.message,
+            code: error.code,
+            ...(error.response && {
+                status: error.response.status,
+                data: error.response.data
+            })
+        });
         return res.status(500).json({
             error: error.message,
+            code: error.code,
+            status: error.response?.status,
+            data: error.response?.data
         });
     }
 };

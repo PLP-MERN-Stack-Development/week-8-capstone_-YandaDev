@@ -2,7 +2,7 @@
 import express from "express";
 import { login, logout, register, savedJobs, updateProfile, getMyCompany } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
-import { profilePhotoUpload, resumeUpload } from "../middlewares/mutler.js";
+import { profilePhotoUpload, profileUpdateUpload } from "../middlewares/mutler.js";
 import { validateRequest } from "../middlewares/validation.js";
 import { userRegisterSchema, userLoginSchema } from "../middlewares/schemas.js";
 
@@ -13,7 +13,7 @@ router.route('/mycompany').get(isAuthenticated, getMyCompany);
 router.route("/signup").post(profilePhotoUpload, validateRequest(userRegisterSchema), register);
 router.route("/login").post(validateRequest(userLoginSchema), login);
 router.route("/logout").get(logout);
-router.route("/profile/update").post(isAuthenticated, resumeUpload, updateProfile);
+router.route("/profile/update").post(isAuthenticated, profileUpdateUpload, updateProfile);
 router.route("/savedjob").post(isAuthenticated, savedJobs)
 
 export default router;

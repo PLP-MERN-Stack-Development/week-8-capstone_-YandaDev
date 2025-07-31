@@ -22,7 +22,6 @@ const Profile = () => {
 
     return (
         <>
-
             <motion.div
                 initial={ { opacity: 0 } }
                 animate={ { opacity: 1 } }
@@ -32,64 +31,69 @@ const Profile = () => {
                 <Navbar />
                 {/* Main container with padding adjustment for navbar */ }
                 <div className="pt-20 max-w-4xl mx-auto px-6">
-                    {/* Profile Information */ }
-                    <div className="bg-gray-800 border border-gray-700 rounded-2xl shadow-md p-6 my-6">
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-4">
-                                <Avatar className="h-24 w-24">
-                                    <AvatarImage src={ user?.profile?.profilePhoto ? user?.profile?.profilePhoto : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSq8T0hZUoX8kuRi3EZpZbUDtZ_WqqN9Ll15Q&s' } alt="profile" />
-                                </Avatar>
-                                <div>
-                                    <h1 className="font-medium text-xl text-white">{ user?.fullname }</h1>
-                                    <p className="text-gray-400">{ user?.profile?.bio }</p>
+                    {/* Profile Information - Avatar and Edit above, skills aligned right with bio */}
+                    <div className="bg-gray-900 border border-blue-900 rounded-3xl shadow-xl p-8 my-8 max-w-3xl mx-auto">
+                        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+                            <div className="flex flex-col items-center w-full md:items-start md:w-1/4">
+                                <div className="flex flex-col items-center w-full">
+                                    <Avatar className="h-24 w-24 shadow-lg mb-2">
+                                        <AvatarImage src={user?.profile?.profilePhoto ? user?.profile?.profilePhoto : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSq8T0hZUoX8kuRi3EZpZbUDtZ_WqqN9Ll15Q&s'} alt="profile" />
+                                    </Avatar>
+                                    <Button
+                                        onClick={() => setOpen(true)}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-3 py-2 shadow-md mt-4"
+                                        aria-label="Edit Profile"
+                                    >
+                                        <Pen className="w-5 h-5" />
+                                    </Button>
                                 </div>
                             </div>
-                            <Button
-                                onClick={ () => setOpen(true) }
-                                className="bg-blue-600 hover:bg-blue-700 text-white"
-                            >
-                                <Pen className="w-4 h-4" />
-                            </Button>
-                        </div>
-                        <div className="my-5 space-y-2">
-                            <div className="flex items-center gap-3">
-                                <Mail className="text-blue-500" />
-                                <span>{ user?.email }</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Contact className="text-blue-500" />
-                                <span>{ user?.phoneNumber }</span>
-                            </div>
-                        </div>
-                        <div className="my-5">
-                            <h1 className="text-white mb-2">Skills</h1>
-                            <div className="flex items-center gap-2 flex-wrap">
-                                { user?.profile?.skills.length !== 0 ? (
-                                    user?.profile?.skills.map((item, index) => (
-                                        <Badge key={ index } className="bg-blue-600 text-white">
-                                            { item }
-                                        </Badge>
-                                    ))
-                                ) : (
-                                    <span>NA</span>
-                                ) }
-                            </div>
-                        </div>
-                        <div className="my-5 flex flex-col gap-2">
-                            <Label className="text-md font-bold text-white">Resume</Label>
-                            <div className="flex items-center gap-4">
-                                {user?.profile?.resume ? (
-                                    <a
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        href={user.profile.resume}
-                                        className="text-blue-500 hover:underline"
-                                    >
-                                        Resume
-                                    </a>
-                                ) : (
-                                    <span>NA</span>
-                                )}
+                            <div className="flex-1 flex flex-col gap-4">
+                                <h1 className="font-bold text-2xl text-white mb-1">{user?.fullname}</h1>
+                                <p className="text-gray-300 text-base leading-relaxed whitespace-pre-line min-h-[48px]">
+                                    {user?.profile?.bio ? user.profile.bio : <span className="text-gray-500">NA</span>}
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-4 mt-2">
+                                    <div className="flex items-center gap-2">
+                                        <Mail className="text-blue-400" />
+                                        <span className="text-gray-200 text-sm">{user?.email}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Contact className="text-blue-400" />
+                                        <span className="text-gray-200 text-sm">{user?.phoneNumber}</span>
+                                    </div>
+                                </div>
+                                <div className="mt-6">
+                                    <h2 className="text-white text-lg font-semibold mb-3">Skills</h2>
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        {Array.isArray(user?.profile?.skills) && user.profile.skills.length > 0 ? (
+                                            user.profile.skills.map((item, index) => (
+                                                <Badge key={index} className="bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-medium shadow">
+                                                    {item}
+                                                </Badge>
+                                            ))
+                                        ) : (
+                                            <span className="text-gray-500">NA</span>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="mt-6">
+                                    <Label className="text-md font-bold text-white">Resume</Label>
+                                    <div className="flex items-center gap-4 mt-2">
+                                        {user?.profile?.resume ? (
+                                            <a
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                href={user.profile.resume}
+                                                className="text-blue-400 hover:underline text-sm font-semibold"
+                                            >
+                                                Resume
+                                            </a>
+                                        ) : (
+                                            <span className="text-gray-500">NA</span>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

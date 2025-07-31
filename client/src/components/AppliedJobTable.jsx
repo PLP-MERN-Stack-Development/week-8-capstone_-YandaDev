@@ -27,7 +27,34 @@ const AppliedJobTable = () => {
             animate={ { opacity: 1, y: 0 } }
             transition={ { duration: 0.5 } }
         >
-            <div className="overflow-x-auto">
+            {/* Mobile: cards, Desktop: table */}
+            <div className="block md:hidden">
+                <div className="flex flex-col gap-4">
+                    {allAppliedJobs?.length > 0 ? (
+                        allAppliedJobs.map((appliedJob, index) => {
+                            const job = appliedJob?.job || {};
+                            const company = job?.company || {};
+                            return (
+                                <motion.div
+                                    key={appliedJob._id}
+                                    className="bg-gray-800 rounded-lg shadow p-4 border border-gray-700"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                                >
+                                    <div className="font-semibold text-lg mb-2 text-white">{job?.title || <span className="text-gray-500">N/A</span>}</div>
+                                    <div className="text-sm mb-1"><span className="font-medium text-gray-400">Company:</span> {company?.name || <span className="text-gray-500">N/A</span>}</div>
+                                    <div className="text-sm mb-1"><span className="font-medium text-gray-400">Applied Date:</span> {appliedJob?.createdAt ? new Date(appliedJob.createdAt).toLocaleDateString() : <span className="text-gray-500">N/A</span>}</div>
+                                    <div className={`text-sm font-medium ${getStatusColor(appliedJob?.status)}`}>Status: {appliedJob?.status || 'Unknown'}</div>
+                                </motion.div>
+                            );
+                        })
+                    ) : (
+                        <div className="text-center py-4 text-gray-500">No applied jobs found</div>
+                    )}
+                </div>
+            </div>
+            <div className="hidden md:block overflow-x-auto">
                 <Table className="table-auto w-full border border-gray-700 rounded-lg bg-gray-800 text-gray-200">
                     <TableHeader>
                         <TableRow className="bg-gray-900 text-gray-200">
@@ -40,7 +67,6 @@ const AppliedJobTable = () => {
                     <TableBody>
                         { allAppliedJobs?.length > 0 ? (
                             allAppliedJobs?.map((appliedJob, index) => {
-                                // Defensive: handle missing job or company
                                 const job = appliedJob?.job || {};
                                 const company = job?.company || {};
                                 return (

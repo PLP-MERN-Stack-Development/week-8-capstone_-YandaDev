@@ -22,6 +22,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         bio: user?.profile?.bio || "",
         skills: user?.profile?.skills?.join(", ") || "", // Combine skills into a comma-separated string
         file: null,
+        profilePhoto: null,
     });
 
     const [fileError, setFileError] = useState("");
@@ -31,14 +32,29 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     };
 
+    // Handles both resume and profile photo file inputs
     const fileChangeHandler = (e) => {
+        const { name } = e.target;
         const file = e.target.files?.[0];
-        if (file && !(file.type.startsWith("image/") || file.type === "application/pdf")) {
-            setFileError("Only images (.jpeg, .png, .webp) or PDF files are allowed");
-        } else {
-            setFileError("");
+        if (name === "profilePhoto") {
+            if (file && !file.type.startsWith("image/")) {
+                setFileError("Only image files (.jpeg, .png, .webp) are allowed for profile photo");
+                setInput({ ...input, profilePhoto: null });
+                return;
+            } else {
+                setFileError("");
+            }
+            setInput({ ...input, profilePhoto: file });
+        } else if (name === "file") {
+            if (file && !(file.type.startsWith("image/") || file.type === "application/pdf")) {
+                setFileError("Only images (.jpeg, .png, .webp) or PDF files are allowed for resume");
+                setInput({ ...input, file: null });
+                return;
+            } else {
+                setFileError("");
+            }
+            setInput({ ...input, file });
         }
-        setInput({ ...input, file });
     };
 
     const submitHandler = async (e) => {
@@ -51,6 +67,9 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         formData.append("skills", input.skills.split(",").map((skill) => skill.trim())); // Convert back to an array
         if (input.file && typeof input.file !== 'string') {
             formData.append("resume", input.file);
+        }
+        if (input.profilePhoto && typeof input.profilePhoto !== 'string') {
+            formData.append("profilePhoto", input.profilePhoto);
         }
         try {
             setLoading(true);
@@ -142,6 +161,18 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                                 name="skills"
                                 value={ input.skills }
                                 onChange={ changeEventHandler }
+                            />
+                        </div>
+
+                        {/* File input for profile photo */}
+                        <div className="flex flex-col gap-1">
+                            <Label htmlFor="profilePhoto">Profile Photo</Label>
+                            <Input
+                                id="profilePhoto"
+                                name="profilePhoto"
+                                type="file"
+                                accept="image/*"
+                                onChange={ fileChangeHandler }
                             />
                         </div>
 

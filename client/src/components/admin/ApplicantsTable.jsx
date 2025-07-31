@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Table,
@@ -15,8 +15,16 @@ import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { APPLICATION_API_END_POINT } from '@/utils/constant';
 import axios from 'axios';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogClose
+} from '../ui/dialog';
+import { Button } from '../ui/button';
 
-const shortlistingStatus = ['Accepted', 'Rejected'];
+const shortlistingStatus = ['Accept', 'Reject'];
 
 const tableRowVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -25,6 +33,8 @@ const tableRowVariants = {
 
 const ApplicantsTable = () => {
     const { applicants } = useSelector((store) => store.application);
+    const [selectedApplicant, setSelectedApplicant] = useState(null);
+    const [showDialog, setShowDialog] = useState(false);
 
     const statusHandler = async (status, id) => {
         try {
@@ -36,6 +46,16 @@ const ApplicantsTable = () => {
         } catch (error) {
             toast.error(error.response.data.message);
         }
+    };
+
+    const handleViewDetails = (applicant) => {
+        setSelectedApplicant(applicant);
+        setShowDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setShowDialog(false);
+        setSelectedApplicant(null);
     };
 
     return (
@@ -54,6 +74,7 @@ const ApplicantsTable = () => {
                         <TableHead className="text-blue-500">Resume</TableHead>
                         <TableHead className="text-blue-500">Date</TableHead>
                         <TableHead className="text-right text-blue-500">Action</TableHead>
+                        <TableHead className="text-blue-500">Details</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -105,19 +126,58 @@ const ApplicantsTable = () => {
                                                     key={idx}
                                                     onClick={() => statusHandler(status, item?._id)}
                                                     whileHover={{ scale: 1.05 }}
-                                                    className={`${status === "Accepted" ? "text-green-700" : "text-red-700"} flex w-fit items-center my-2 cursor-pointer text-blue-500`}
-                                                >
+                                                    className={`${status === "Accept" ? "text-green-700" : "text-red-700"} flex w-fit items-center my-2 cursor-pointer`}>
                                                     <span>{status}</span>
                                                 </motion.div>
                                             ))}
                                         </PopoverContent>
                                     </Popover>
                                 </TableCell>
+                                <TableCell>
+                                    <Button variant="outline" size="sm" onClick={() => handleViewDetails(item?.applicant)}>
+                                        View Details
+                                    </Button>
+                                </TableCell>
                             </motion.tr>
                         ) : null
                     )}
                 </TableBody>
             </Table>
+            <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
+                {selectedApplicant && (
+                    <DialogContent className="max-w-md mx-auto p-6 rounded-lg shadow-lg bg-white">
+                        <DialogTitle className="text-xl font-bold mb-2 text-blue-600">Applicant Details</DialogTitle>
+                        <div className="mb-2">
+                            <span className="font-semibold">Fullname:</span> {selectedApplicant.fullname}
+                        </div>
+                        <div className="mb-2">
+                            <span className="font-semibold">Email:</span> {selectedApplicant.email}
+                        </div>
+                        <div className="mb-2">
+                            <span className="font-semibold">Contact:</span> {selectedApplicant.phoneNumber}
+                        </div>
+                        <div className="mb-2">
+                            <span className="font-semibold">Bio:</span>
+                            <p className="text-gray-700 mt-1">{selectedApplicant?.profile?.bio || 'No bio provided.'}</p>
+                        </div>
+                        <div className="mb-2">
+                            <span className="font-semibold">Skills:</span>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                                {selectedApplicant?.profile?.skills?.length > 0 ? (
+                                    selectedApplicant.profile.skills.map((skill, idx) => (
+                                        <span key={idx} className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">{skill}</span>
+                                    ))
+                                ) : (
+                                    <span className="text-gray-400">No skills listed.</span>
+                                )}
+                            </div>
+                        </div>
+                        <DialogClose asChild>
+                            <Button variant="ghost" className="mt-4">Close</Button>
+                        </DialogClose>
+                    </DialogContent>
+                )}
+            </Dialog>
         </motion.div>
     );
 }

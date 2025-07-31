@@ -104,7 +104,7 @@ const Navbar = () => {
                                             </Avatar>
                                             <div>
                                                 <h1 className="font-semibold text-blue-400">{ user?.fullname }</h1>
-                                                <p className="text-sm text-gray-400">{ user?.profile?.bio }</p>
+                                                {/* Bio removed from popover */}
                                             </div>
                                         </div>
                                         <div className="mt-4 flex justify-between items-center gap-2">

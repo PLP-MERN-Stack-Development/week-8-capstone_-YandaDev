@@ -7,10 +7,9 @@ A comprehensive job seeking and posting platform that connects job seekers with 
 - **Frontend:** [https://tech-job-hub.netlify.app](https://tech-job-hub.netlify.app)
 - **Backend:** [https://tech-job-hub-backend.onrender.com](https://tech-job-hub-backend.onrender.com)
 
-## 🎥 Video Demonstration
-*5-10 minute walkthrough of the application*
 
-**[Video Demo Placeholder – Add your video link here]**
+## 🎥 Video Demonstration
+Watch a walkthrough of the application: [https://youtu.be/R8dnp7Lz7Z4](https://youtu.be/R8dnp7Lz7Z4)
 
 > **Important Note:** We're using free-tier servers which may need a warm-up:
 > 1. First open the backend URL and wait for it to load
@@ -26,14 +25,17 @@ A comprehensive job seeking and posting platform that connects job seekers with 
 3. Explore job listings, apply, or post jobs as appropriate.
 4. Use the chatbot for help or questions.
 
+
 ### User Roles
 - **Job Seeker:** Register, search/apply for jobs, manage profile, upload resume.
 - **Recruiter:** Register company, post/manage jobs, view applicants, manage company profile.
 
+
 ### Tips
-- Use the filters to narrow job searches.
+- Use filters to narrow job searches.
 - Save jobs to your profile for later.
 - Recruiters can track applicants and update job postings.
+
 
 ### For Job Seekers
 - Account creation and management
@@ -43,28 +45,34 @@ A comprehensive job seeking and posting platform that connects job seekers with 
 - Profile customization
 - Resume upload and management
 
+
 ### For Recruiters
 - Company registration and profile management
 - Job posting creation and management
 - Access to applicant details (name, phone, resume)
 - Applicant tracking and management
 
-## Application Screenshots
 
-### 1. Job Description Page
-![Job Posting For](./images/1.png)
+## 📸 Application Screenshots
 
-### 2. Sign In Interface
-![Job Search Interface](./images/2.png)
+**1. Landing Page**
+![Landing Page](./images/1.png)
 
-### 3. Footer
-![Profile Management](./images/3.png)
+**2. Sign Up Interface**
+![Sign Up](./images/2.png)
 
-### 4. Chat Bot
-![Company Dashboard](./images/4.png)
+**3. Login Interface**
+![Login](./images/3.png)
 
-### 5. Landing Page
-![Landing Page](./images/5.png)
+**4. Chat Bot**
+![Chatbot](./images/4.png)
+
+**5. Job Description Page**
+![Job Description](./images/5.png)
+
+**6. Recruiter Dashboard**
+![Jobs Page](./images/6.png)
+
 
 
 ## 🏗️ Technical Architecture Overview
@@ -77,15 +85,24 @@ A comprehensive job seeking and posting platform that connects job seekers with 
 - **CI/CD:** GitHub Actions (build, test, deploy)
 - **Monitoring:** Sentry (frontend & backend error tracking)
 - **Hosting:** Netlify (frontend), Render (backend)
+- **Real-Time Features:** Chatbot responses are delivered instantly; applicant/job updates are reflected live for recruiters and job seekers.
 
 
 
-## 🧪 Testing & CI/CD
+
+## 🧪 Testing, Quality Assurance & CI/CD
 
 - **Unit/Integration Tests:**
   - Backend: Run `pnpm test` in `/server` (see test files for coverage)
   - Frontend: (Add tests as needed)
 - **End-to-End Tests:** (Add E2E tests if implemented)
+- **Manual Testing:**
+  - Tested across Chrome, Firefox, and mobile browsers
+  - User flows verified for job seekers and recruiters
+- **Accessibility:**
+  - Follows WCAG guidelines for color contrast and keyboard navigation
+- **Code Review & Refactoring:**
+  - Peer reviews and regular refactoring for maintainability
 - **CI/CD:**
   - Automated with GitHub Actions: runs tests and deploys on push to main
   - See `.github/workflows/` for config
@@ -103,7 +120,7 @@ APPWRITE_ENDPOINT=your_appwrite_endpoint
 APPWRITE_PROJECT_ID=your_appwrite_project_id
 APPWRITE_API_KEY=your_appwrite_api_key
 APPWRITE_BUCKET_ID=your_appwrite_bucket_id
-MISTRAL_API_KEY=your_mistral_api_key
+VITE_OPENROUTER_API_KEY=your_openrouter_api_key
 FRONTEND_URL=http://localhost:5173
 ```
 
@@ -118,7 +135,7 @@ APPWRITE_ENDPOINT=your_appwrite_endpoint
 APPWRITE_PROJECT_ID=your_appwrite_project_id
 APPWRITE_API_KEY=your_appwrite_api_key
 APPWRITE_BUCKET_ID=your_appwrite_bucket_id
-MISTRAL_API_KEY=your_mistral_api_key
+OPENROUTER_API_KEY=your_openrouter_api_key
 FRONTEND_URL=https://tech-job-hub.netlify.app
 ```
 
